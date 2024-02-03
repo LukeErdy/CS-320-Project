@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    // Player Sprites
     public SpriteRenderer spriteRenderer;
     public Sprite facingRight;
     public Sprite facingLeft;
@@ -35,6 +36,7 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         }
 
+        // Change sprite based on movement direction
         if (dirX == 1) spriteRenderer.sprite = facingRight;
         else if (dirX == -1) spriteRenderer.sprite = facingLeft;
     }
