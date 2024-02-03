@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 5319ee572f6cbe248abb483d039b6ac0
+guid: 5da909d76c2a26b22978895a5ca0d84d
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 16
+  spritePixelsToUnits: 7.8
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -72,7 +72,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -123,13 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: GrassAndDirt_48x48_0
+      name: Little Guy_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 32
-        width: 16
-        height: 16
+        x: 5
+        y: 16
+        width: 11
+        height: 15
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,40 +137,40 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 441194caf68897d4e9cff2931fad44be
-      internalID: -1529040580
+      spriteID: e400ccdf929d7ace0a3987badc8d2e2f
+      internalID: 363010970
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GrassAndDirt_48x48_1
+      name: Little Guy_1
       rect:
         serializedVersion: 2
         x: 16
-        y: 32
+        y: 0
         width: 16
         height: 16
       alignment: 0
       pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 0, y: 0, z: 0, w: 16}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dd673853b8db52a46807ddedea25ef31
-      internalID: 1051586098
+      spriteID: fa871bf61ea8d0db3b9e582de1765463
+      internalID: -1514071669
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GrassAndDirt_48x48_2
+      name: Little Guy_2
       rect:
         serializedVersion: 2
-        x: 32
-        y: 32
-        width: 16
+        x: 36
+        y: 16
+        width: 12
         height: 16
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -179,17 +179,59 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9e71be56218183e4c8be9a2c76d85d71
-      internalID: -1587652020
+      spriteID: 97515d2d047de5309aa6f6efd2f9f03e
+      internalID: -565131835
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GrassAndDirt_48x48_3
+      name: Little Guy_3
       rect:
         serializedVersion: 2
         x: 0
+        y: 0
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8e02b099e500a1c669313a9e87f0ac67
+      internalID: 1596494608
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Little Guy_4
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 92d6606b74392aa06ae0c6bfcff6bfdd
+      internalID: -563831968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Little Guy_5
+      rect:
+        serializedVersion: 2
+        x: 16
         y: 16
         width: 16
         height: 16
@@ -200,113 +242,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c36689dd78d981e4cad185390f32f7b5
-      internalID: 2027478455
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: GrassAndDirt_48x48_4
-      rect:
-        serializedVersion: 2
-        x: 16
-        y: 16
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ddc5a501c5f11544b88abf26eaf3aae6
-      internalID: -1035250676
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: GrassAndDirt_48x48_5
-      rect:
-        serializedVersion: 2
-        x: 32
-        y: 16
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 11c6dda3eb959ae4b89e5f2f984de05e
-      internalID: 368971669
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: GrassAndDirt_48x48_6
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: b103c5cc2282f004fa711d8a99f6bab8
-      internalID: -1689384729
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: GrassAndDirt_48x48_7
-      rect:
-        serializedVersion: 2
-        x: 16
-        y: 0
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 6ec5833514f77ae47bcb548c38530370
-      internalID: -1241480825
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: GrassAndDirt_48x48_8
-      rect:
-        serializedVersion: 2
-        x: 32
-        y: 0
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0a5f6f0ed149f294ab54c57301264937
-      internalID: 1000366679
+      spriteID: f4e311851a6a7364fbd81bddabd933bd
+      internalID: -524626053
       vertices: []
       indices: 
       edges: []
@@ -322,15 +259,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      GrassAndDirt_48x48_0: -1529040580
-      GrassAndDirt_48x48_1: 1051586098
-      GrassAndDirt_48x48_2: -1587652020
-      GrassAndDirt_48x48_3: 2027478455
-      GrassAndDirt_48x48_4: -1035250676
-      GrassAndDirt_48x48_5: 368971669
-      GrassAndDirt_48x48_6: -1689384729
-      GrassAndDirt_48x48_7: -1241480825
-      GrassAndDirt_48x48_8: 1000366679
+      Little Guy_0: 363010970
+      Little Guy_1: -1514071669
+      Little Guy_2: -565131835
+      Little Guy_3: 1596494608
+      Little Guy_4: -563831968
+      Little Guy_5: -524626053
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

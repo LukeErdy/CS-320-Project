@@ -2,8 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class PlayerMovement : MonoBehaviour
 {
+    // Player Sprites
+    public SpriteRenderer spriteRenderer;
+    public Sprite facingRight;
+    public Sprite facingLeft;
+    // public Sprite jumping;
+    
     private Rigidbody2D rb; // So that we only have to call GetComponent once
     float dirX;
 
@@ -28,5 +35,9 @@ public class PlayerMovement : MonoBehaviour
             // Apply a vertical force to the object to which this script is assigned (in this case, the player)
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         }
+
+        // Change sprite based on movement direction
+        if (dirX == 1) spriteRenderer.sprite = facingRight;
+        else if (dirX == -1) spriteRenderer.sprite = facingLeft;
     }
 }
