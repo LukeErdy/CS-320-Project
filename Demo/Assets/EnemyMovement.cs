@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour
 {
+    public SpriteRenderer spriteRenderer;
+    public Sprite facingRight;
+    public Sprite facingLeft;
     private Rigidbody2D rb;
-    private float dirX;
-    private float walkForce = 10f;
+    private float posX { get { return rb.position[0]; } }
+    private float posY { get { return rb.position[1]; } }
+    //likely to be inherited from an Enemy class
+    private float walkForce = 1f;
+    private float jumpForce = 1f;
 
     private void Start()
     {
@@ -15,8 +21,18 @@ public class EnemyMovement : MonoBehaviour
 
     private void Update()
     {
-        //TODO: how to get player's location?
-        dirX = Input.GetAxisRaw("Horizontal")*-1; //move opposite direction of player?
-        rb.velocity = new Vector2(walkForce * dirX, rb.velocity.y);
+        var playerLoc = GameObject.Find("Player").transform.position; //returns (x,y,z)
+        rb.velocity = new Vector2(walkForce*(playerLoc.x - posX), jumpForce*(playerLoc.y - posY));
+
+        //Debug.Log("Player Location: " + playerLoc);
+        //Debug.Log("Velocity: " + rb.velocity);
+
+        //Change sprite based on movement direction
+        float dirX = playerLoc.x - posX;
+        //Debug.Log("DirX: " + dirX);
+        if (dirX > 0) spriteRenderer.sprite = facingRight;
+        else if (dirX < 0) spriteRenderer.sprite = facingLeft;
+
+        //TODO: change sprite if upside down?
     }
 }
