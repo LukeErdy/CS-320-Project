@@ -28740,6 +28740,11 @@ MonoBehaviour:
   spriteRenderer: {fileID: 511576907}
   facingRight: {fileID: 1596494608, guid: 5da909d76c2a26b22978895a5ca0d84d, type: 3}
   facingLeft: {fileID: 363010970, guid: 5da909d76c2a26b22978895a5ca0d84d, type: 3}
+  boxSize: {x: 1.43, y: 1.22}
+  castDistance: 0.5
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!114 &511576911
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29219,7 +29224,7 @@ GameObject:
   - component: {fileID: 1361754200}
   - component: {fileID: 1361754199}
   - component: {fileID: 1361754198}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -10,6 +10,10 @@ public class PlayerMovement : MonoBehaviour
     public Sprite facingRight;
     public Sprite facingLeft;
     // public Sprite jumping;
+
+    public Vector2 boxSize;
+    public float castDistance;
+    public LayerMask groundLayer;
     
     private Rigidbody2D rb; // So that we only have to call GetComponent once
     float dirX;
@@ -30,7 +34,7 @@ public class PlayerMovement : MonoBehaviour
         dirX = Input.GetAxisRaw("Horizontal"); // GetAxisRaw instead of GetAxis so that it returns to 0 immediately
         rb.velocity = new Vector2(walkForce * dirX, rb.velocity.y);
 
-        if (Input.GetButtonDown("Jump")) // Using Unity's input manager for greater flexibility
+        if (Input.GetButtonDown("Jump") && CheckIfGrounded()) // Using Unity's input manager for greater flexibility
         {
             // Apply a vertical force to the object to which this script is assigned (in this case, the player)
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
@@ -39,5 +43,18 @@ public class PlayerMovement : MonoBehaviour
         // Change sprite based on movement direction
         if (dirX == 1) spriteRenderer.sprite = facingRight;
         else if (dirX == -1) spriteRenderer.sprite = facingLeft;
+    }
+
+    public bool CheckIfGrounded()
+    {
+        if (Physics2D.BoxCast(transform.position, boxSize, 0, -transform.up, castDistance, groundLayer)) {
+            return true;
+        }
+        return false;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireCube(transform.position-transform.up * castDistance, boxSize);
     }
 }
