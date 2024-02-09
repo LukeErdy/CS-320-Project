@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    //Debug
+    bool canFly = false;
+
     // Player Sprites
     public SpriteRenderer spriteRenderer;
     public Sprite facingRight;
@@ -34,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
         dirX = Input.GetAxisRaw("Horizontal"); // GetAxisRaw instead of GetAxis so that it returns to 0 immediately
         rb.velocity = new Vector2(walkForce * dirX, rb.velocity.y);
 
-        if (Input.GetButtonDown("Jump") && CheckIfGrounded()) // Using Unity's input manager for greater flexibility
+        if (Input.GetButtonDown("Jump") && (CheckIfGrounded() || canFly)) // Using Unity's input manager for greater flexibility
         {
             // Apply a vertical force to the object to which this script is assigned (in this case, the player)
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
