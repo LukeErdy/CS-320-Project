@@ -1,3 +1,6 @@
+//Comment this line to disable level gen and revert to original level
+#define DO_GENERATE
+
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -27,6 +30,7 @@ public class Generate : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        #if DO_GENERATE
         //TODO: Set player position above ground level
 
         //Create 2D array of bytes that will be converted into the tilemap
@@ -72,6 +76,7 @@ public class Generate : MonoBehaviour
                 }
             }
         }
+        #endif
     }
 
     // Update is called once per frame
