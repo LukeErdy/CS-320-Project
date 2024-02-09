@@ -150,7 +150,7 @@ Transform:
   m_GameObject: {fileID: 161873162}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.57, y: 1.32, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -28674,7 +28674,7 @@ Transform:
   m_GameObject: {fileID: 511576905}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.66, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -28844,7 +28844,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.65, y: 0.24, z: -10}
+  m_LocalPosition: {x: 0, y: 10, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -31497,7 +31497,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tilemap: {fileID: 1361754197}
-  grass_1: {fileID: 11400000, guid: 84927cb903dfacd4c8f32f6d29a4c482, type: 2}
+  grass_1: {fileID: 11400000, guid: a372df71f51f9464a8c9087d1634fa7d, type: 2}
+  dirt_1: {fileID: 11400000, guid: 18f904429a9ec784a86541b84bb04310, type: 2}
   sky_1: {fileID: 11400000, guid: c6c32da69cbdbbc4893ad602173f7658, type: 2}
   testtile_1: {fileID: 11400000, guid: 416f046f3aff2b803b849a7e45a2105a, type: 2}
 --- !u!1 &1540490725
