@@ -22,12 +22,8 @@ public class Generate : MonoBehaviour
 
     //TODO replace this method 2 from https://stackoverflow.com/a/56604959
     public Tilemap tilemap;
-    public Tile grass_1;
-    public Tile dirt_1;
-    public Tile sky_1;
-    public Tile testtile_1;
-
-    Tile[] tiles = [tilemap, grass_1, dirt_1, sky_1, testtile_1];
+    //[0] = null; [1] = grass; [2] = dirt; [3] = sky; [4] = testtile
+    public Tile[] tiles = new Tile[5];
 
     // Start is called before the first frame update
     void Start()
@@ -40,6 +36,7 @@ public class Generate : MonoBehaviour
         const int xDim = MAX_X-MIN_X;
         const int yDim = MAX_Y-MIN_Y;
         byte[,] map = new byte[xDim, yDim];
+        tiles[0] = null;
 
         
         //Generates a grassy, hilly terrain with dirt beneath it
@@ -69,14 +66,6 @@ public class Generate : MonoBehaviour
         for(int i = 0; i < xDim; i++){
             for(int j = 0; j < yDim; j++){
                 tilemap.SetTile(new Vector3Int(i+MIN_X, j+MIN_Y, 0), tiles[map[i,j]]);
-                // if(map[i,j] == 1) tilemap.SetTile(new Vector3Int(i+MIN_X, j+MIN_Y, 0), sky_1);
-                // switch(map[i,j]){
-                //     case 0: tilemap.SetTile(new Vector3Int(i+MIN_X, j+MIN_Y, 0), null); break;
-                //     case 1: tilemap.SetTile(new Vector3Int(i+MIN_X, j+MIN_Y, 0), grass_1); break;
-                //     case 2: tilemap.SetTile(new Vector3Int(i+MIN_X, j+MIN_Y, 0), dirt_1); break;
-                //     case 3: tilemap.SetTile(new Vector3Int(i+MIN_X, j+MIN_Y, 0), sky_1); break;
-                //     case 4: tilemap.SetTile(new Vector3Int(i+MIN_X, j+MIN_Y, 0), testtile_1); break;
-                // }
             }
         }
         #endif

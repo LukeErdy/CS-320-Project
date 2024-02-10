@@ -31501,6 +31501,12 @@ MonoBehaviour:
   dirt_1: {fileID: 11400000, guid: 18f904429a9ec784a86541b84bb04310, type: 2}
   sky_1: {fileID: 11400000, guid: c6c32da69cbdbbc4893ad602173f7658, type: 2}
   testtile_1: {fileID: 11400000, guid: 416f046f3aff2b803b849a7e45a2105a, type: 2}
+  tiles:
+  - {fileID: 0}
+  - {fileID: 11400000, guid: a372df71f51f9464a8c9087d1634fa7d, type: 2}
+  - {fileID: 11400000, guid: 18f904429a9ec784a86541b84bb04310, type: 2}
+  - {fileID: 11400000, guid: c6c32da69cbdbbc4893ad602173f7658, type: 2}
+  - {fileID: 11400000, guid: 416f046f3aff2b803b849a7e45a2105a, type: 2}
 --- !u!1 &1540490725
 GameObject:
   m_ObjectHideFlags: 0
