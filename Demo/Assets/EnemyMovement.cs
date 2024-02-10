@@ -7,8 +7,8 @@ using UnityEngine;
 public class EnemyMovement : MonoBehaviour
 {
     public SpriteRenderer spriteRenderer;
-    public Sprite[] moving;
-    private int movingIndex = 0;
+    public Sprite[] sprites;
+    private int spriteIndex = 0;
     private Timer spriteTimer;
     private Rigidbody2D rb;
     private float posX { get { return rb.position[0]; } }
@@ -30,7 +30,7 @@ public class EnemyMovement : MonoBehaviour
 
     private void ChangeSprite(System.Object source, ElapsedEventArgs e)
     {
-        movingIndex = movingIndex+1 >= moving.Length ? 0 : movingIndex + 1;
+        spriteIndex = spriteIndex + 1 >= sprites.Length ? 0 : spriteIndex + 1;
     }
 
     private bool WithinSightRadius(Vector2 targetLoc)
@@ -54,8 +54,7 @@ public class EnemyMovement : MonoBehaviour
             //Change sprite based on movement direction
             if (distX > 0) spriteRenderer.flipX = false;
             else if (distX < 0) spriteRenderer.flipX = true;
-
-            spriteRenderer.sprite = moving[movingIndex];
+            spriteRenderer.sprite = sprites[spriteIndex];
         }
     }
 
