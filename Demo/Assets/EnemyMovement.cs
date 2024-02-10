@@ -10,21 +10,14 @@ public class EnemyMovement : MonoBehaviour
     public Sprite[] moving;
     private int movingIndex = 0;
     private Timer spriteTimer;
-    public Sprite[] idle;
     private Rigidbody2D rb;
     private float posX { get { return rb.position[0]; } }
     private float posY { get { return rb.position[1]; } }
 
-    //grounding fields
-    public Vector2 boxSize;
-    public float castDistance;
-    public LayerMask groundLayer;
-
     //TODO: inherit these fields from an Enemy class
     private float walkForce = 1f;
     private float jumpForce = 1f;
-    private float sightRadius = 10f;
-    private bool canFly = false;
+    private float sightRadius = 5f;
 
     private void Start()
     {
@@ -40,40 +33,30 @@ public class EnemyMovement : MonoBehaviour
         movingIndex = movingIndex+1 >= moving.Length ? 0 : movingIndex + 1;
     }
 
+    private bool WithinSightRadius(Vector2 targetLoc)
+    {
+        double distance = Math.Sqrt(Math.Pow(Math.Abs(posX-targetLoc.x), 2) + Math.Pow(Math.Abs(posY-targetLoc.y), 2));
+        return distance <= sightRadius;
+    }
+
     private void Update()
     {
-        //Calculate velocity based on target player's location
-        var playerLoc = GameObject.Find("Player").transform.position; //returns (x,y,z)
-        float velocity_x = walkForce * (playerLoc.x - posX);
-        float velocity_y = (playerLoc.y - posY);
-        //Debug.Log("velocity_y: " + velocity_y);
-        if (velocity_y>jumpForce && (CheckIfGrounded() || canFly)) //see if the enemy can jump higher; bounded by its jumpForce
-        {
-            rb.velocity = new Vector2(velocity_x, velocity_y/jumpForce);
+        var playerLoc = GameObject.Find("Player").transform.position;
+        if (WithinSightRadius((Vector2)playerLoc)) {
+            //Calculate velocity
+            var dir = (playerLoc - rb.transform.position).normalized;
+            float distX = playerLoc.x - posX;
+            float distY = playerLoc.y - posY;
+            Debug.Log("playerLoc: " + playerLoc + "    distY: " + distY + "      normaldirY: " + dir.y);
+            if(distY>=jumpForce) rb.velocity = new Vector2(walkForce * distX, jumpForce * dir.y);
+            else rb.velocity = new Vector2(walkForce * distX,0);
+
+            //Change sprite based on movement direction
+            if (distX > 0) spriteRenderer.flipX = false;
+            else if (distX < 0) spriteRenderer.flipX = true;
+
+            spriteRenderer.sprite = moving[movingIndex];
         }
-        else rb.velocity = new Vector2(velocity_x, 0); //rb.velocity.y
-
-        //Change sprite based on movement direction
-        float dirX = playerLoc.x - posX;
-        float dirY = playerLoc.y - posY;
-        //Debug.Log("dirY: " + dirY);
-        if (dirX > 0) spriteRenderer.flipX = false;
-        else if (dirX < 0) spriteRenderer.flipX = true;
-
-        spriteRenderer.sprite = moving[movingIndex];
     }
 
-    private bool CheckIfGrounded()
-    {
-        if (Physics2D.BoxCast(transform.position, boxSize, 0, -transform.up, castDistance, groundLayer))
-        {
-            return true;
-        }
-        return false;
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawWireCube(transform.position - transform.up * castDistance, boxSize);
-    }
 }
