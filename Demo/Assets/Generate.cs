@@ -1,5 +1,5 @@
 //Comment this line to disable level gen and revert to original level
-#define DO_GENERATE
+//#define DO_GENERATE
 
 using System.Collections;
 using System.Collections.Generic;
