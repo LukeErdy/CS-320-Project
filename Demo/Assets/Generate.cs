@@ -8,6 +8,9 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 
+enum Tl{ empty, grass_0, dirt_0, stone_0, gravel_0 }
+
+
 public class Generate : MonoBehaviour
 {
     const int MIN_X = -10;
@@ -22,8 +25,8 @@ public class Generate : MonoBehaviour
 
     //TODO replace this method 2 from https://stackoverflow.com/a/56604959
     public Tilemap tilemap;
-    //[0] = null; [1] = grass; [2] = dirt; [3] = sky; [4] = testtile
-    public Tile[] tiles = new Tile[5];
+    //[0] = null; [1] = grass; [2] = dirt; [3] = stone; [4] = gravel
+    public Tile[] tiles = new Tile[6];
 
     // Start is called before the first frame update
     void Start()
@@ -35,7 +38,7 @@ public class Generate : MonoBehaviour
         //Position (0,0) corresponds to the bottom left corner in-game
         const int xDim = MAX_X-MIN_X;
         const int yDim = MAX_Y-MIN_Y;
-        byte[,] map = new byte[xDim, yDim];
+        Tl[,] map = new Tl[xDim, yDim];
         tiles[0] = null;
 
         
@@ -53,8 +56,11 @@ public class Generate : MonoBehaviour
             for(int j = 0; j <= width; j++){
                 if(i+j >= xDim-1) break;
                 int colH = startY+nextHill.getY(j);
-                map[i+j, colH] = 1;
-                for(int k = colH-1; k >= 0; k--) map[i+j,k] = 2;
+                //FIXME: Got an index OOB error once
+                map[i+j, colH] = Tl.grass_0;
+                for(int k = colH-1; k > colH-5; k--) map[i+j,k] = Tl.dirt_0;
+                map[i+j,colH-5] = Tl.gravel_0;
+                for(int k = colH-6; k >= 0; k--) map[i+j,k] = Tl.stone_0;
             }
 
             startY += nextHill.getY(width);
@@ -62,10 +68,9 @@ public class Generate : MonoBehaviour
         }
 
         //Convert 2D array into tilemap
-        //TODO: Convert values to enum
         for(int i = 0; i < xDim; i++){
             for(int j = 0; j < yDim; j++){
-                tilemap.SetTile(new Vector3Int(i+MIN_X, j+MIN_Y, 0), tiles[map[i,j]]);
+                tilemap.SetTile(new Vector3Int(i+MIN_X, j+MIN_Y, 0), tiles[(int)map[i,j]]);
             }
         }
         #endif
@@ -92,4 +97,16 @@ class Hill{
         if(inv) return (int)(-output);
         else return output;
     }
+}
+
+
+class WFCRule{
+    (int,int)[] required;
+    (int,int)[] forbidden;
+}
+
+
+class WaveFuncColl{
+    byte[,] map;
+    WFCRule[,] rules;
 }
