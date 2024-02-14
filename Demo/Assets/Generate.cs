@@ -1,5 +1,7 @@
 //Comment this line to disable level gen and revert to original level
-#define DO_GENERATE
+// #define DO_GENERATE'
+// #define OLD_RULES
+# define NEW_RULES
 
 using System.Collections;
 using System.Collections.Generic;
@@ -32,13 +34,37 @@ public class Generate : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        const int xDim = MAX_X-MIN_X;
+        const int yDim = MAX_Y-MIN_Y;
+
+        //WFC TESTING===================================================
+
+        int testX = xDim-1, testY = yDim;
+        // int testX = 10, testY = 10;
+        WaveFuncColl test = new WaveFuncColl(testX,testY);
+        for(int i = 0; i < testX; i++){
+            // Debug.Log("Setting " + i + ", 2");
+            test.set(i, 30, Tl.grass_0);
+        }
+        // test.queue.print();
+        test.run();
+
+        for(int i = 0; i < testX; i++){
+            for(int j = 0; j < testY; j++){
+                tilemap.SetTile(new Vector3Int(i+MIN_X, j+MIN_Y, 0), tiles[(int)test.map[i,j]]);
+            }
+        }
+
+
+        //END WFC TESTING===============================================
+
+
         #if DO_GENERATE
         //TODO: Set player position above ground level
 
         //Create 2D array of bytes that will be converted into the tilemap
         //Position (0,0) corresponds to the bottom left corner in-game
-        const int xDim = MAX_X-MIN_X;
-        const int yDim = MAX_Y-MIN_Y;
+        
         Tl[,] map = new Tl[xDim, yDim];
         tiles[0] = null;
 
@@ -101,36 +127,45 @@ class Hill{
 }
 
 
-enum Tl{ empty, grass_0, dirt_0, stone_0, gravel_0 }
+enum Tl{ empty, grass_0, dirt_0, stone_0, gravel_0, error_0 }
 
 
 //A WFCRule indicates all the possible tiles that can be placed in
 //the x,y position relative to the current tile
 //TODO: implement weights for tiles
 class WFCRule{
-    int x, y;
-    HashSet<Tl> tiles;
+    public int x, y;
+    public HashSet<Tl> tiles;
     public WFCRule(int xIn, int yIn, HashSet<Tl> tilesIn){ x=xIn; y=yIn; tiles=tilesIn; }
 }
 
 
 class WFCQueue{
     int[,] indices;
-    int size;
+    int size; //Actual size minus one
     (int x, int y, HashSet<Tl> tiles)[] queue;
 
     public WFCQueue(int x, int y){
         indices = new int[x,y];
         queue = new (int x, int y, HashSet<Tl> tiles)[x*y];
-        size = queue.Length;
+        size = queue.Length-1;
         //Initialize the queue with each tile being able to be any of
         //the possible types and the indices pointing to the correct
         //location in the queue
         for(int i = 0; i < x; i++){
             for(int j = 0; j < y; j++){
                 indices[i,j] = i*y + j;
+                // Debug.Log(i + ", " + j + ": " + (i*y + j));
+
+                #if NEW_RULES
                 queue[indices[i,j]] = (i, j, new HashSet<Tl>(new Tl[] 
-                    {Tl.empty, Tl.grass_0, Tl.dirt_0, Tl.stone_0, Tl.gravel_0}));
+                    {Tl.empty, Tl.dirt_0, Tl.stone_0, Tl.gravel_0}));
+                #endif
+
+                #if OLD_RULES
+                queue[indices[i,j]] = (i, j, new HashSet<Tl>(new Tl[] 
+                    {Tl.empty, Tl.dirt_0, Tl.stone_0, Tl.gravel_0}));
+                #endif
             }
         }
     }
@@ -144,6 +179,7 @@ class WFCQueue{
     }
 
     public (int x, int y, HashSet<Tl> tiles) pop(){
+        //TODO: check for empty queue
         (int x, int y, HashSet<Tl> tiles) output = queue[0];
         queue[0] = queue[size];
 
@@ -162,13 +198,35 @@ class WFCQueue{
                 i = rCh;
             } else Debug.Log("WFCQueue.pop: Should not reach this control path");
         }
+        indices[output.x, output.y] = -1;
         size--;
         return output;
     }
 
     public void update(int x, int y, HashSet<Tl> intersect){
+        // Debug.Log("Updating " + x + ", " + y);
+        if(x < 0 || y < 0 || x >= indices.GetLength(0) || y >= indices.GetLength(1)) return;
+
+
         int i = indices[x,y];
+        if(i == -1) return;
+        // Debug.Log(queue[i].x + " " + queue[i].y);
+
+        // Debug.Log("Original set");
+        // foreach(Tl tile in queue[i].tiles){
+        //     Debug.Log(tile.ToString());
+        // }
+        // Debug.Log("Intersecting set");
+        // foreach(Tl tile in intersect){
+        //     Debug.Log(tile.ToString());
+        // }
+
         queue[i].tiles.IntersectWith(intersect);
+
+        // Debug.Log("New set");
+        // foreach(Tl tile in queue[i].tiles){
+        //     Debug.Log(tile.ToString());
+        // }
 
         while(true){
             int par = (i-1)/2;
@@ -180,8 +238,11 @@ class WFCQueue{
         }
     }
 
+    public int getSize(){ return size+1; }
+
     public void print(){
-        for(int i = 0; i < size; i++){
+        Debug.Log("Size = " + (size+1));
+        for(int i = 0; i < size+1; i++){
             Debug.Log("x: " + queue[i].x + " y: " + queue[i].y + " Tiles: " + queue[i].tiles.Count);
         }
     }
@@ -189,13 +250,59 @@ class WFCQueue{
 
 
 class WaveFuncColl{
-    Tl[,] map;
+    public Tl[,] map; //TODO: Make private and move setting the actual game map tiles to this class
+    public WFCQueue queue; //TODO: Make private
     WFCRule[][] rules;
 
     public WaveFuncColl(int x, int y){ 
         map = new Tl[x,y];
+        queue = new WFCQueue(x,y);
+
         //Manually specifying rules for now
+        #if NEW_RULES
         rules = new WFCRule[Enum.GetNames(typeof(Tl)).Length][];
+        rules[(int)Tl.empty] = new WFCRule[] {
+            new WFCRule(0, 1, new HashSet<Tl>(new Tl[] {Tl.empty})),
+            new WFCRule(0,-1, new HashSet<Tl>(new Tl[] {Tl.empty, Tl.grass_0})),
+            new WFCRule(1, 0, new HashSet<Tl>(new Tl[] {Tl.empty})),
+            new WFCRule(-1,0, new HashSet<Tl>(new Tl[] {Tl.empty}))
+        };
+        rules[(int)Tl.grass_0] = new WFCRule[] {
+            new WFCRule(0, 1, new HashSet<Tl>(new Tl[] {Tl.empty})),
+            new WFCRule(0,-1, new HashSet<Tl>(new Tl[] {Tl.dirt_0, Tl.gravel_0})),
+            new WFCRule(1, 0, new HashSet<Tl>(new Tl[] {Tl.grass_0})), //TODO
+            new WFCRule(-1,0, new HashSet<Tl>(new Tl[] {Tl.grass_0})) //TODO
+        };
+        rules[(int)Tl.dirt_0] = new WFCRule[] {
+            new WFCRule(0, 1, new HashSet<Tl>(new Tl[] {Tl.grass_0, Tl.dirt_0})),
+            new WFCRule(0,-1, new HashSet<Tl>(new Tl[] {Tl.dirt_0, Tl.gravel_0})),
+            new WFCRule(1, 0, new HashSet<Tl>(new Tl[] {Tl.dirt_0, Tl.gravel_0})),
+            new WFCRule(-1,0, new HashSet<Tl>(new Tl[] {Tl.dirt_0, Tl.gravel_0}))
+        };
+        rules[(int)Tl.stone_0] = new WFCRule[] {
+            new WFCRule(0, 1, new HashSet<Tl>(new Tl[] {Tl.stone_0, Tl.gravel_0})),
+            new WFCRule(0,-1, new HashSet<Tl>(new Tl[] {Tl.stone_0, Tl.gravel_0})),
+            new WFCRule(1, 0, new HashSet<Tl>(new Tl[] {Tl.stone_0, Tl.gravel_0})),
+            new WFCRule(-1,0, new HashSet<Tl>(new Tl[] {Tl.stone_0, Tl.gravel_0}))
+        };
+        rules[(int)Tl.gravel_0] = new WFCRule[] {
+            new WFCRule(0, 1, new HashSet<Tl>(new Tl[] {Tl.grass_0, Tl.dirt_0, Tl.gravel_0})),
+            new WFCRule(0,-1, new HashSet<Tl>(new Tl[] {Tl.dirt_0, Tl.stone_0, Tl.gravel_0})),
+            new WFCRule(1, 0, new HashSet<Tl>(new Tl[] {Tl.grass_0, Tl.dirt_0, Tl.stone_0, Tl.gravel_0})),
+            new WFCRule(-1,0, new HashSet<Tl>(new Tl[] {Tl.grass_0, Tl.dirt_0, Tl.stone_0, Tl.gravel_0}))
+        };
+        rules[(int)Tl.error_0] = new WFCRule[] {};
+        #endif
+
+
+        #if OLD_RULES
+        rules = new WFCRule[Enum.GetNames(typeof(Tl)).Length][];
+        rules[(int)Tl.empty] = new WFCRule[] {
+            new WFCRule(0, 1, new HashSet<Tl>(new Tl[] {Tl.empty})),
+            new WFCRule(0,-1, new HashSet<Tl>(new Tl[] {Tl.empty, Tl.dirt_0})),
+            new WFCRule(1, 0, new HashSet<Tl>(new Tl[] {Tl.empty, Tl.grass_0, Tl.dirt_0})),
+            new WFCRule(-1,0, new HashSet<Tl>(new Tl[] {Tl.empty, Tl.grass_0, Tl.dirt_0}))
+        };
         rules[(int)Tl.grass_0] = new WFCRule[] {
             new WFCRule(0, 1, new HashSet<Tl>(new Tl[] {Tl.empty})),
             new WFCRule(0,-1, new HashSet<Tl>(new Tl[] {Tl.dirt_0, Tl.gravel_0})),
@@ -220,11 +327,63 @@ class WaveFuncColl{
             new WFCRule(1, 0, new HashSet<Tl>(new Tl[] {Tl.grass_0, Tl.dirt_0, Tl.stone_0, Tl.gravel_0})),
             new WFCRule(-1,0, new HashSet<Tl>(new Tl[] {Tl.grass_0, Tl.dirt_0, Tl.stone_0, Tl.gravel_0}))
         };
+        rules[(int)Tl.error_0] = new WFCRule[] {};
+        #endif
+    }
+
+    void update(int x, int y){
+        Tl tile = map[x,y];
+        // Debug.Log((int)tile + " " + rules.Length);
+        for(int i = 0; i < rules[(int)tile].Length; i++){
+            int newX = x + rules[(int)tile][i].x;
+            int newY = y + rules[(int)tile][i].y;
+            queue.update(newX, newY, rules[(int)tile][i].tiles);
+        }
+    }
+
+    public void set(int x, int y, Tl tile){
+        // queue.print();
+        queue.update(x, y, new HashSet<Tl>(new Tl[] {}));
+        (int x, int y, HashSet<Tl> tiles) setTile = queue.pop();
+        map[x,y] = tile;
+        update(x, y);
     }
 
     public void run(){
-        return;
+        // queue.print();
+        var rand = new System.Random();
+        while(queue.getSize() > 0){
+            //Get the possible tiles of the lowest entropy location
+            (int x, int y, HashSet<Tl> tiles) setTile = queue.pop();
+            Tl[] possible = new Tl[setTile.tiles.Count];
+            setTile.tiles.CopyTo(possible);
+
+
+            //Pick randomly from possible tiles, then update according to rules
+            if(possible.Length == 0){
+                map[setTile.x, setTile.y] = Tl.error_0;
+                Debug.Log("Impossible Combination at " + setTile.x + ", " + setTile.y);
+            } else{
+                int temp = rand.Next(0, possible.Length);
+                // Debug.Log("[0," + (possible.Length) + "]: " + temp);
+                map[setTile.x, setTile.y] = possible[temp];
+                // Debug.Log("Setting " + setTile.x + "," + setTile.y + " to " + possible[temp].ToString());
+            }
+            
+            // Debug.Log("Popping " + setTile.x + ", " + setTile.y + " Setting to " + map[setTile.x,setTile.y].ToString());
+            // queue.print();
+            
+            update(setTile.x, setTile.y);
+        }
+        // printMap();
     }
 
-
+    public void printMap(){
+        Debug.Log("Printing Map");
+        for(int i = 0; i < map.GetLength(0); i++){
+            for(int j = 0; j < map.GetLength(1); j++){
+                Debug.Log("x: " + i + " y: " + j + " tile: " + map[i,j].ToString());
+            }
+        }
+    }
 }
