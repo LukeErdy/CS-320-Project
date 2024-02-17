@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Don't use this script. Handle adjustments to player health in PlayerMetrics.cs.
+
 public class DeathCondition : MonoBehaviour
 {
     float lowThreshold = -10f;
