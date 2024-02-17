@@ -1,5 +1,5 @@
 //Comment these defines to disable level gen and revert to original level
-// #define OLD_GEN
+//#define OLD_GEN
 #define WFC_GEN
 
 using System.Collections;
