@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OnlineOnClick : MonoBehaviour
+public class OnlineOnKey : MonoBehaviour
 {
     public SpriteRenderer spriteRenderer;
     public Sprite Online;

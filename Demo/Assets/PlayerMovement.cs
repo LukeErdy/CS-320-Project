@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     public SpriteRenderer spriteRenderer;
     public Sprite facingRight;
     public Sprite facingLeft;
+    public bool chatLock = false;
     // public Sprite jumping;
     
     private Rigidbody2D rb; // So that we only have to call GetComponent once
@@ -26,6 +27,9 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        // Prevent player movement if chatbox is open
+        if ( chatLock ) return;
+
         // Get the walk direction and apply a horizontal force to the player
         dirX = Input.GetAxisRaw("Horizontal"); // GetAxisRaw instead of GetAxis so that it returns to 0 immediately
         rb.velocity = new Vector2(walkForce * dirX, rb.velocity.y);
