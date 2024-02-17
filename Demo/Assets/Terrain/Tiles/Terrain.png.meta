@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 5da909d76c2a26b22978895a5ca0d84d
+guid: eb000ec26625af88db348da70bd9c415
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -123,13 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Little Guy_0
+      name: Terrain_0
       rect:
         serializedVersion: 2
-        x: 5
-        y: 16
-        width: 11
-        height: 15
+        x: 0
+        y: 8
+        width: 8
+        height: 8
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,41 +137,41 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e400ccdf929d7ace0a3987badc8d2e2f
-      internalID: 363010970
+      spriteID: c84d7bc96d6e773a0b4a90a87b03f9c3
+      internalID: -2054417411
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Little Guy_1
+      name: Terrain_1
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 8
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c109eae194483f2038c8815cf1607c00
+      internalID: -1233586075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_2
       rect:
         serializedVersion: 2
         x: 16
-        y: 0
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 16}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: fa871bf61ea8d0db3b9e582de1765463
-      internalID: -1514071669
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Little Guy_2
-      rect:
-        serializedVersion: 2
-        x: 36
-        y: 16
-        width: 12
-        height: 16
+        y: 8
+        width: 8
+        height: 8
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -179,20 +179,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 97515d2d047de5309aa6f6efd2f9f03e
-      internalID: -565131835
+      spriteID: b68538a6eb84cc4f0beb1b5f769ae7dc
+      internalID: 1251990702
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Little Guy_3
+      name: Terrain_3
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 11
-        height: 15
+        width: 8
+        height: 8
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -200,20 +200,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8e02b099e500a1c669313a9e87f0ac67
-      internalID: 1596494608
+      spriteID: 3a0fe4dbc06d15b28ada96353f3046b6
+      internalID: -82022584
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Little Guy_4
+      name: Terrain_4
       rect:
         serializedVersion: 2
-        x: 32
+        x: 8
         y: 0
-        width: 12
-        height: 16
+        width: 8
+        height: 8
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -221,20 +221,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 92d6606b74392aa06ae0c6bfcff6bfdd
-      internalID: -563831968
+      spriteID: 4dd2561a24e612403818d3a1c626d015
+      internalID: 1015954437
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Little Guy_5
+      name: Terrain_5
       rect:
         serializedVersion: 2
         x: 16
-        y: 16
-        width: 16
-        height: 16
+        y: 0
+        width: 8
+        height: 8
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -242,8 +242,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f4e311851a6a7364fbd81bddabd933bd
-      internalID: -524626053
+      spriteID: 41eee89d918d2d6d99c63102574773a1
+      internalID: 908029333
       vertices: []
       indices: 
       edges: []
@@ -259,12 +259,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Little Guy_0: 363010970
-      Little Guy_1: -1514071669
-      Little Guy_2: -565131835
-      Little Guy_3: 1596494608
-      Little Guy_4: -563831968
-      Little Guy_5: -524626053
+      Terrain_0: -2054417411
+      Terrain_1: -1233586075
+      Terrain_2: 1251990702
+      Terrain_3: -82022584
+      Terrain_4: 1015954437
+      Terrain_5: 908029333
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
