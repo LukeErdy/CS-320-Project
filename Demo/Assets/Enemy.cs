@@ -2,51 +2,38 @@ using System;
 using System.Timers;
 using UnityEngine;
 
-public class EnemyMovement : MonoBehaviour
+public class Enemy : Actor
 {
-    public SpriteRenderer spriteRenderer;
-    private Sprite[] currentSprites = null;
+    protected Sprite[] currentSprites = null;
     public Sprite[] movingSprites;
     public Sprite[] attackingSprites;
-    private int spriteIndex = 0;
-    private Timer spriteTimer;
-    private Rigidbody2D rb;
-    private float posX { get { return rb.position[0]; } }
-    private float posY { get { return rb.position[1]; } }
+    protected int spriteIndex = 0;
+    protected Timer spriteTimer;
 
-    //depends on terrain
-    float lowThreshold = -20f;
+    public float sightRadius = 10f;
 
-    //TODO: inherit these fields from an Enemy class
-    private float walkForce = 1f;
-    private float jumpForce = 2f;
-    private float sightRadius = 5f;
-    private float currentHP;
-    private float maxHP = 10;
-
-    private void Start()
+    public void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         spriteTimer = new Timer(100);
         spriteTimer.Elapsed += ChangeSprite;
         spriteTimer.AutoReset = true;
         spriteTimer.Enabled = true;
-        currentHP = maxHP;
     }
 
-    private void ChangeSprite(System.Object source, ElapsedEventArgs e)
+    protected void ChangeSprite(System.Object source, ElapsedEventArgs e)
     {
         if (null == currentSprites) currentSprites = movingSprites;
         spriteIndex = spriteIndex + 1 >= currentSprites.Length ? 0 : spriteIndex + 1;
     }
 
-    private bool WithinSightRadius(Vector2 targetLoc)
+    protected bool WithinSightRadius(Vector2 targetLoc)
     {
         double distance = Math.Sqrt(Math.Pow(Math.Abs(posX - targetLoc.x), 2) + Math.Pow(Math.Abs(posY - targetLoc.y), 2));
         return distance <= sightRadius;
     }
 
-    private void Update()
+    public void Update()
     {
         var playerLoc = GameObject.Find("Player").transform.position;
         if (WithinSightRadius((Vector2)playerLoc))
@@ -73,7 +60,7 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D col)
+    protected void OnCollisionEnter2D(Collision2D col)
     {
         //Debug.Log("OnCollisionEnter2D: " + col.gameObject);
         if (col.gameObject.name.Equals("Player"))
@@ -84,7 +71,7 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    private void OnCollisionStay2D(Collision2D col)
+    protected void OnCollisionStay2D(Collision2D col)
     {
         //Debug.Log("OnCollisionStay2D: " + col.gameObject);
         if (col.gameObject.name.Equals("Player"))
@@ -94,37 +81,18 @@ public class EnemyMovement : MonoBehaviour
             col.GetContacts(contacts);
             for (int i = 0; i < contactCount; i++)
                 Debug.Log(contacts[i].point + " " + contacts[i].normal);*/
-            var player = col.gameObject.GetComponent<PlayerMetrics>();
-            Bite(player);
+            var player = col.gameObject.GetComponent<Player>();
+            if (spriteIndex == 1) player.AdjustHealth(-1);
         }
     }
 
-    private void OnCollisionExit2D(Collision2D col)
+    protected void OnCollisionExit2D(Collision2D col)
     {
         //Debug.Log("OnCollisionExit2D: " + col.gameObject);
         if (col.gameObject.name.Equals("Player"))
         {
             spriteIndex = 0;
             currentSprites = movingSprites;
-        }
-    }
-
-    //TODO: move to Rodent class
-    private void Bite(PlayerMetrics p)
-    {
-        if(p && spriteIndex==1) p.AdjustHealth(-1);
-    }
-
-    public void AdjustHealth(float change)
-    {
-        currentHP += change;
-        if (currentHP < 0f)
-        {
-            currentHP = 0f;
-        }
-        else if (currentHP > maxHP)
-        {
-            currentHP = maxHP;
         }
     }
 }
