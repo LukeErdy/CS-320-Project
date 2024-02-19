@@ -14,7 +14,7 @@ using UnityEngine.Tilemaps;
 public class Generate : MonoBehaviour
 {
     const int MIN_X = -10;
-    const int MAX_X = 60;
+    const int MAX_X = 59;
     const int MIN_Y = -22;
     const int MAX_Y = 19;
 
@@ -22,6 +22,12 @@ public class Generate : MonoBehaviour
     const int MIN_AMP = 3;
     const int MAX_PER = 10;
     const int MIN_PER = 5;
+
+    const int xDim = MAX_X-MIN_X;
+    const int yDim = MAX_Y-MIN_Y;
+    
+    public int[] grassTiles = new int[xDim];
+
 
     //TODO replace this method 2 from https://stackoverflow.com/a/56604959
     public Tilemap tilemap;
@@ -31,12 +37,10 @@ public class Generate : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        const int xDim = MAX_X-MIN_X;
-        const int yDim = MAX_Y-MIN_Y;
 
 
         #if WFC_GEN
-        int testX = xDim-1, testY = yDim;
+        int testX = xDim, testY = yDim;
         WaveFuncColl test = new WaveFuncColl(testX,testY);
 
         //Generate a horizontal line of grass
@@ -49,7 +53,7 @@ public class Generate : MonoBehaviour
         var rand = new System.Random();
         Hill nextHill = null;
 
-        for(int i = 0; i < xDim-1; i++){
+        for(int i = 0; i < xDim; i++){
             if(wCount == width){
                 goDown = !goDown;
                 if(prevH != -1) startY += nextHill.getY(width);
@@ -77,6 +81,7 @@ public class Generate : MonoBehaviour
                 }
             }
             test.set(i, currH, Tl.grass_0);
+            grassTiles[i] = currH;
             prevH = currH;
             wCount++;
         }
@@ -105,7 +110,7 @@ public class Generate : MonoBehaviour
         bool startBool = false;
         var rand = new System.Random();
 
-        for(int i = 0; i < xDim-1; i += width+1){
+        for(int i = 0; i < xDim; i += width+1){
             width = rand.Next(MIN_PER, MAX_PER);
             amplitude = rand.Next(MIN_AMP, MAX_AMP);
 
@@ -115,6 +120,7 @@ public class Generate : MonoBehaviour
                 int colH = startY+nextHill.getY(j);
                 //FIXME: Got an index OOB error once
                 map[i+j, colH] = Tl.grass_0;
+                grassTiles[i+j] = colH;
                 for(int k = colH-1; k > colH-5; k--) map[i+j,k] = Tl.dirt_0;
                 map[i+j,colH-5] = Tl.gravel_0;
                 for(int k = colH-6; k >= 0; k--) map[i+j,k] = Tl.stone_0;
