@@ -24,9 +24,6 @@ public class Player : Actor
     float requiredXP = 45;
     public float currentXP;
 
-    float spawnX = 0;
-    float spawnY = 10;
-
     // Start is called before the first frame update
     private void Start()
     {
@@ -37,7 +34,7 @@ public class Player : Actor
         AdjustXP(0);
     }
 
-    private void Update()
+    private void UpdateMovement()
     {
         // Get the walk direction and apply a horizontal force to the player
         dirX = Input.GetAxisRaw("Horizontal"); // GetAxisRaw instead of GetAxis so that it returns to 0 immediately
@@ -53,20 +50,30 @@ public class Player : Actor
         // Change sprite based on movement direction
         if (dirX == 1) spriteRenderer.sprite = facingRight;
         else if (dirX == -1) spriteRenderer.sprite = facingLeft;
+    }
 
+    private void CheckHealth()
+    {
         if (currentHP <= 0)
         {
             //TODO: How do we want to handle death?
             //rn I'm just respawning him
             rb.velocity = new Vector2(0, 0);
-            transform.position = new Vector3(spawnX, spawnY, transform.position.z);
+            transform.position = new Vector3(0, 10, transform.position.z);
             AdjustHealth(maxHP);
         }
 
         // mainly for testing purposes
-        if (transform.position.y < lowThreshold) { // you lose health from falling
+        if (transform.position.y < lowThreshold)
+        { // you lose health from falling
             AdjustHealth(-0.01f);
         }
+    }
+
+    private void Update()
+    {
+        CheckHealth();
+        UpdateMovement();
     }
 
     public void AdjustXP(float change)

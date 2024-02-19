@@ -10,10 +10,16 @@ public class Enemy : Actor
     protected int spriteIndex = 0;
     protected Timer spriteTimer;
 
-    public float sightRadius = 10f;
+    protected float sightRadius = 10f;
+
+    public override string ToString()
+    {
+        return $"{name} ({posX}, {posY})";
+    }
 
     public void Start()
     {
+        if (null == currentSprites) currentSprites = movingSprites;
         rb = GetComponent<Rigidbody2D>();
         spriteTimer = new Timer(100);
         spriteTimer.Elapsed += ChangeSprite;
@@ -76,7 +82,7 @@ public class Enemy : Actor
         //Debug.Log("OnCollisionStay2D: " + col.gameObject);
         if (col.gameObject.name.Equals("Player"))
         {
-            //check if rodent is facing correct direction in order for the bite to be effective
+            //TODO: check if rodent is facing correct direction in order for the bite to be effective
             /*ContactPoint2D[] contacts = new ContactPoint2D[col.contactCount];
             col.GetContacts(contacts);
             for (int i = 0; i < contactCount; i++)

@@ -9,11 +9,11 @@ public class Actor : MonoBehaviour
     public float currentHP { get { return _currentHP; } }
     public float maxHP { get { return _maxHP; } }
 
-    public float walkForce = 1f;
-    public float jumpForce = 1f;
+    protected float walkForce = 1f;
+    protected float jumpForce = 1f;
 
     //depends on terrain
-    protected float lowThreshold = -100f;
+    protected float lowThreshold = -20;
 
     public SpriteRenderer spriteRenderer;
     public Rigidbody2D rb;
