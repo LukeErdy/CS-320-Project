@@ -23,11 +23,11 @@ public class Generate : MonoBehaviour
     const int MAX_PER = 10;
     const int MIN_PER = 5;
 
-    const int xDim = MAX_X - MIN_X;
-    const int yDim = MAX_Y - MIN_Y;
-
-    public bool IsInitialized { get; private set; } = false;
+    const int xDim = MAX_X-MIN_X;
+    const int yDim = MAX_Y-MIN_Y;
+    
     public int[] grassTiles = new int[xDim];
+    public bool IsInitialized { get; private set; } = false; //needed for EnemySpawner
 
     //TODO replace this method 2 from https://stackoverflow.com/a/56604959
     public Tilemap tilemap;
@@ -37,52 +37,46 @@ public class Generate : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+
         #if WFC_GEN
         int testX = xDim, testY = yDim;
-        WaveFuncColl test = new WaveFuncColl(testX, testY);
+        WaveFuncColl test = new WaveFuncColl(testX,testY);
 
         //Generate a horizontal line of grass
         // for(int i = 0; i < testX; i++) test.set(i, 30, Tl.grass_0);
 
         //Generate Grassy Hills
         //FIXME: Some empty tiles with high amplitude (~30)
-        int startY = yDim - 20, width = 0, wCount = 0, currH, prevH = -1, amplitude;
+        int startY=yDim-20, width=0, wCount=0, currH, prevH=-1, amplitude;
         bool goDown = true;
         var rand = new System.Random();
         Hill nextHill = null;
 
-        for (int i = 0; i < xDim; i++)
-        {
-            if (wCount == width)
-            {
+        for(int i = 0; i < xDim; i++){
+            if(wCount == width){
                 goDown = !goDown;
-                if (prevH != -1) startY += nextHill.getY(width);
+                if(prevH != -1) startY += nextHill.getY(width);
                 width = rand.Next(MIN_PER, MAX_PER);
                 amplitude = rand.Next(MIN_AMP, MAX_AMP);
                 nextHill = new Hill(width, amplitude, goDown);
                 wCount = 0;
             }
             currH = startY + nextHill.getY(wCount);
-            if (currH >= testY) currH = testY - 1;
-            else if (currH < 0) currH = 0;
+            if(currH >= testY) currH = testY-1;
+            else if(currH < 0) currH = 0;
 
-            if (prevH != -1)
-            {
-                if (currH < prevH)
-                {
-                    for (int j = 0; j > currH - prevH; j--)
-                    {
-                        test.set(i, prevH + j, Tl.empty);
-                        test.set(i - 1, prevH + j - 1, Tl.dirt_0);
+            if(prevH != -1){
+                if(currH < prevH){
+                    for(int j = 0; j > currH-prevH; j--){
+                        test.set(i, prevH+j, Tl.empty);
+                        test.set(i-1, prevH+j-1, Tl.dirt_0);
                     }
-                }
-                else
-                {
-                    for (int j = 0; j < currH - prevH; j++)
-                    {
-                        test.set(i, prevH + j, Tl.dirt_0);
+                } else {
+                    for(int j = 0; j < currH-prevH; j++){
+                        test.set(i, prevH+j, Tl.dirt_0);
                         //FIXME: Goes out of bounds at the top sometimes
-                        test.set(i - 1, prevH + j + 1, Tl.empty);
+                        test.set(i-1, prevH+j+1, Tl.empty);
                     }
                 }
             }
@@ -91,21 +85,19 @@ public class Generate : MonoBehaviour
             prevH = currH;
             wCount++;
         }
-
+        
         test.run();
 
         //Write tiles to the game's tilemap
-        for (int i = 0; i < testX; i++)
-        {
-            for (int j = 0; j < testY; j++)
-            {
-                tilemap.SetTile(new Vector3Int(i + MIN_X, j + MIN_Y, 0), tiles[(int)test.map[i, j]]);
+        for(int i = 0; i < testX; i++){
+            for(int j = 0; j < testY; j++){
+                tilemap.SetTile(new Vector3Int(i+MIN_X, j+MIN_Y, 0), tiles[(int)test.map[i,j]]);
             }
         }
-#endif
+        #endif
 
 
-#if OLD_GEN
+        #if OLD_GEN
         //Create 2D array of bytes that will be converted into the tilemap
         //Position (0,0) corresponds to the bottom left corner in-game
         Tl[,] map = new Tl[xDim, yDim];
@@ -144,80 +136,71 @@ public class Generate : MonoBehaviour
                 tilemap.SetTile(new Vector3Int(i+MIN_X, j+MIN_Y, 0), tiles[(int)map[i,j]]);
             }
         }
-#endif
+        #endif
         IsInitialized = true;
     }
 
     // Update is called once per frame
-    void Update() { }
+    void Update(){}
 }
 
 //Uses a sin wave to produce realistic-ish hills
-class Hill
-{
+class Hill{
     float w;
     float a;
     bool inv;
 
-    public Hill(int width, int amplitude, bool invert)
-    {
+    public Hill(int width, int amplitude, bool invert){
         w = width;
         a = amplitude;
         inv = invert;
     }
 
-    public int getY(int x)
-    {
-        int output = (int)((a / 2) * (Math.Sin((Math.PI / w) * (x - (w / 2))) + 1));
-        if (inv) return (int)(-output);
+    public int getY(int x){
+        int output = (int)((a/2) * (Math.Sin((Math.PI/w)*(x - (w/2))) + 1));
+        if(inv) return (int)(-output);
         else return output;
     }
 }
 
 
-enum Tl { empty, grass_0, dirt_0, stone_0, gravel_0, error_0 }
+enum Tl{ empty, grass_0, dirt_0, stone_0, gravel_0, error_0 }
 
 
 //A WFCRule indicates all the possible tiles that can be placed in
 //the x,y position relative to the current tile
 //TODO: implement weights for tiles
-class WFCRule
-{
+class WFCRule{
     public int x, y;
     public HashSet<Tl> tiles;
-    public WFCRule(int xIn, int yIn, HashSet<Tl> tilesIn) { x = xIn; y = yIn; tiles = tilesIn; }
+    public WFCRule(int xIn, int yIn, HashSet<Tl> tilesIn){ x=xIn; y=yIn; tiles=tilesIn; }
 }
 
 
-class WFCQueue
-{
+class WFCQueue{
     int[,] indices;
     int size; //Actual size minus one
     (int x, int y, HashSet<Tl> tiles)[] queue;
 
-    public WFCQueue(int x, int y)
-    {
-        indices = new int[x, y];
-        queue = new (int x, int y, HashSet<Tl> tiles)[x * y];
-        size = queue.Length - 1;
+    public WFCQueue(int x, int y){
+        indices = new int[x,y];
+        queue = new (int x, int y, HashSet<Tl> tiles)[x*y];
+        size = queue.Length-1;
 
         //Initialize the queue with each tile being able to be any of
         //the possible types and the indices pointing to the correct
         //location in the queue
-        for (int i = 0; i < x; i++)
-        {
-            for (int j = 0; j < y; j++)
-            {
-                indices[i, j] = i * y + j;
-                queue[indices[i, j]] = (i, j, new HashSet<Tl>(new Tl[]
+        for(int i = 0; i < x; i++){
+            for(int j = 0; j < y; j++){
+                indices[i,j] = i*y + j;
+                queue[indices[i,j]] = (i, j, new HashSet<Tl>(new Tl[] 
                     {Tl.empty, Tl.dirt_0, Tl.stone_0, Tl.gravel_0}));
             }
         }
     }
 
     //Swaps items in the queue and updates their indices in the table
-    void swap(int ind1, int ind2)
-    {
+    void swap(int ind1, int ind2){
         var temp = queue[ind1];
         queue[ind1] = queue[ind2];
         queue[ind2] = temp;
@@ -225,32 +208,24 @@ class WFCQueue
         indices[queue[ind2].x, queue[ind2].y] = ind2;
     }
 
-    public (int x, int y, HashSet<Tl> tiles) pop()
-    {
+    public (int x, int y, HashSet<Tl> tiles) pop(){
         var output = queue[0];
         queue[0] = queue[size];
 
         int i = 0;
-        while (true)
-        {
-            int lCh = (2 * i) + 1;
-            int rCh = (2 * i) + 2;
-            if ((lCh >= size || queue[i].tiles.Count <= queue[lCh].tiles.Count) &&
-                (rCh >= size || queue[i].tiles.Count <= queue[rCh].tiles.Count))
-            {
+        while(true){
+            int lCh = (2*i) + 1;
+            int rCh = (2*i) + 2;
+            if((lCh >= size || queue[i].tiles.Count <= queue[lCh].tiles.Count) &&
+                (rCh >= size || queue[i].tiles.Count <= queue[rCh].tiles.Count)){
                 break;
-            }
-            else if (queue[i].tiles.Count > queue[lCh].tiles.Count)
-            {
+            } else if(queue[i].tiles.Count > queue[lCh].tiles.Count){
                 swap(i, lCh);
                 i = lCh;
-            }
-            else if (queue[i].tiles.Count > queue[rCh].tiles.Count)
-            {
+            } else if(queue[i].tiles.Count > queue[rCh].tiles.Count){
                 swap(i, rCh);
                 i = rCh;
-            }
-            else Debug.Log("WFCQueue.pop: Should not reach this control path");
+            } else Debug.Log("WFCQueue.pop: Should not reach this control path");
         }
         indices[output.x, output.y] = -1;
         size--;
@@ -260,9 +235,8 @@ class WFCQueue
     //Updates the possible tile type a specific tile can be by doing
     //a set intersection between the current list of tiles and the
     //input set, then moves that item up the queue if necessary
-    public void update(int x, int y, HashSet<Tl> intersect)
-    {
-        if (x < 0 || y < 0 || x >= indices.GetLength(0) || y >= indices.GetLength(1)) return;
+    public void update(int x, int y, HashSet<Tl> intersect){
+        if(x < 0 || y < 0 || x >= indices.GetLength(0) || y >= indices.GetLength(1)) return;
         /*
          *The second condition in this if statement shouldn't be
          *necessary, so I'm probably missing a bounds check somewhere
@@ -270,51 +244,45 @@ class WFCQueue
          *generate the level correctly. If more bugs crop up with
          *level generation, this is a likely candidate.
          */
-        int i = indices[x, y];
-        if (i == -1 || i > size) return;
+        int i = indices[x,y];
+        if(i == -1 || i > size) return;
 
         queue[i].tiles.IntersectWith(intersect);
 
-        while (true)
-        {
-            int par = (i - 1) / 2;
+        while(true){
+            int par = (i-1)/2;
             //This will move the tile up the queue even if it's equal
             //to the parent to ensure WaveFunColl.set() works
             //TODO: I don't think "par < 0" is necessary
-            if (i == 0 || par < 0 || queue[i].tiles.Count > queue[par].tiles.Count) break;
-            else
-            {
+            if(i == 0 || par < 0 || queue[i].tiles.Count > queue[par].tiles.Count) break;
+            else{
                 swap(i, par);
                 i = par;
             }
         }
     }
 
-    public int getSize() { return size + 1; }
+    public int getSize(){ return size+1; }
 
     //Debugging
-    public void print(int depth = -1)
-    {
+    public void print(int depth=-1){
         //TODO: implement depth
-        Debug.Log("Size = " + (size + 1));
-        for (int i = 0; i < size + 1; i++)
-        {
+        Debug.Log("Size = " + (size+1));
+        for(int i = 0; i < size+1; i++){
             Debug.Log("x: " + queue[i].x + " y: " + queue[i].y + " Tiles: " + queue[i].tiles.Count);
         }
     }
 }
 
 
-class WaveFuncColl
-{
+class WaveFuncColl{
     public Tl[,] map; //TODO: Make private and move setting the actual game map tiles to this class
     public WFCQueue queue; //TODO: Make private
     WFCRule[][] rules;
 
-    public WaveFuncColl(int x, int y)
-    {
-        map = new Tl[x, y];
-        queue = new WFCQueue(x, y);
+    public WaveFuncColl(int x, int y){ 
+        map = new Tl[x,y];
+        queue = new WFCQueue(x,y);
 
         //Manually specifying rules for now
         rules = new WFCRule[Enum.GetNames(typeof(Tl)).Length][];
@@ -346,17 +314,15 @@ class WaveFuncColl
             new WFCRule(1, 0, new HashSet<Tl>(new Tl[] {Tl.dirt_0, Tl.stone_0, Tl.gravel_0})),
             new WFCRule(-1,0, new HashSet<Tl>(new Tl[] {Tl.dirt_0, Tl.stone_0, Tl.gravel_0}))
         };
-        rules[(int)Tl.error_0] = new WFCRule[] { };
+        rules[(int)Tl.error_0] = new WFCRule[] {};
     }
 
     //Runs through the rules for the tile type at the given location
     //and updates the possible types for all the tiles affected by 
     //those rules
-    void update(int x, int y)
-    {
-        Tl tile = map[x, y];
-        for (int i = 0; i < rules[(int)tile].Length; i++)
-        {
+    void update(int x, int y){
+        Tl tile = map[x,y];
+        for(int i = 0; i < rules[(int)tile].Length; i++){
             int newX = x + rules[(int)tile][i].x;
             int newY = y + rules[(int)tile][i].y;
             queue.update(newX, newY, rules[(int)tile][i].tiles);
@@ -364,33 +330,27 @@ class WaveFuncColl
     }
 
     //Sets a tile to a specific type
-    public void set(int x, int y, Tl tile)
-    {
-        queue.update(x, y, new HashSet<Tl>(new Tl[] { }));
+    public void set(int x, int y, Tl tile){
+        queue.update(x, y, new HashSet<Tl>(new Tl[] {}));
         var setTile = queue.pop();
-        map[x, y] = tile;
+        map[x,y] = tile;
         update(x, y);
     }
 
     //Generate the map
-    public void run()
-    {
+    public void run(){
         var rand = new System.Random();
-        while (queue.getSize() > 0)
-        {
+        while(queue.getSize() > 0){
             //Get the possible tiles of the lowest entropy location
             var setTile = queue.pop();
             Tl[] possible = new Tl[setTile.tiles.Count];
             setTile.tiles.CopyTo(possible);
 
             //Pick randomly from possible tiles, then update according to rules
-            if (possible.Length == 0)
-            {
+            if(possible.Length == 0){
                 map[setTile.x, setTile.y] = Tl.error_0;
                 Debug.Log("Impossible Combination at " + setTile.x + ", " + setTile.y);
-            }
-            else
-            {
+            } else{
                 int temp = rand.Next(0, possible.Length);
                 map[setTile.x, setTile.y] = possible[temp];
             }
@@ -400,14 +360,11 @@ class WaveFuncColl
     }
 
     //Debugging
-    public void printMap()
-    {
+    public void printMap(){
         Debug.Log("Printing Map");
-        for (int i = 0; i < map.GetLength(0); i++)
-        {
-            for (int j = 0; j < map.GetLength(1); j++)
-            {
-                Debug.Log("x: " + i + " y: " + j + " tile: " + map[i, j].ToString());
+        for(int i = 0; i < map.GetLength(0); i++){
+            for(int j = 0; j < map.GetLength(1); j++){
+                Debug.Log("x: " + i + " y: " + j + " tile: " + map[i,j].ToString());
             }
         }
     }
