@@ -27,7 +27,7 @@ public class Generate : MonoBehaviour
     const int yDim = MAX_Y-MIN_Y;
     
     public int[] grassTiles = new int[xDim];
-
+    public bool IsInitialized { get; private set; } = false; //needed for EnemySpawner
 
     //TODO replace this method 2 from https://stackoverflow.com/a/56604959
     public Tilemap tilemap;
@@ -137,6 +137,7 @@ public class Generate : MonoBehaviour
             }
         }
         #endif
+        IsInitialized = true;
     }
 
     // Update is called once per frame
