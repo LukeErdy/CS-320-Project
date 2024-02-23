@@ -5,7 +5,7 @@ using UnityEngine;
 public class Player : Actor
 {
     //Debug
-    bool canFly = false;
+    bool canFly = true;
 
     // Player Sprites
     public Sprite facingRight;
@@ -23,6 +23,8 @@ public class Player : Actor
     public XPBar xpBar;
     float requiredXP = 45;
     public float currentXP;
+
+    public float lastVelocity = 0f;
 
     // Start is called before the first frame update
     private void Start()
@@ -44,7 +46,7 @@ public class Player : Actor
         {
             // Apply a vertical force to the object to which this script is assigned (in this case, the player)
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-            AdjustXP(3f);// and gain XP from spamming space(you're welcome Caleb)
+            AdjustXP(3f);// and gain XP from spamming space (you're welcome Caleb)
         }
 
         // Change sprite based on movement direction
@@ -70,10 +72,19 @@ public class Player : Actor
         }
     }
 
+    private void CheckFallDamage()
+    {
+        if (lastVelocity < -30f && CheckIfGrounded()) {
+            AdjustHealth(lastVelocity * 0.009f);
+        }
+        lastVelocity = rb.velocity.y;
+    }
+
     private void Update()
     {
         CheckHealth();
         UpdateMovement();
+        CheckFallDamage();
     }
 
     public void AdjustXP(float change)
