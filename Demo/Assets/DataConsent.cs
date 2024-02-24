@@ -1,28 +1,24 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using Unity.Services.Core;
 using Unity.Services.Analytics;
 
 public class DataConsent : MonoBehaviour
-{
-    async void Start()
+{ 
+    public bool consent;
+   public void Consent()
     {
-		await UnityServices.InitializeAsync();
-
-		AskForConsent();
+        consent = true;
+        UnityServices.InitializeAsync();
+        AnalyticsService.Instance.StartDataCollection();
+        SceneManager.LoadSceneAsync("Main Menu");
     }
-
-	void AskForConsent()
-	{
-		// show the player a UI element that asks for consent.
-
-		// if consent given take down UI element and call on ConsentGiven
-
-		// else take down UI element and do not collect data 
-	}
-
-	void ConsentGiven()
-	{
-		AnalyticsService.Instance.StartDataCollection();
-	}
+   public void MainMenu()
+    {
+        consent = false;
+        SceneManager.LoadSceneAsync("Main Menu");
+    }
+    
 }
