@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : Actor
 {
@@ -24,7 +26,10 @@ public class Player : Actor
     float requiredXP = 45;
     public float currentXP;
 
+<<<<<<< HEAD
+=======
     public float lastVelocity = 0f;
+>>>>>>> main
 
     // Start is called before the first frame update
     private void Start()
@@ -34,6 +39,7 @@ public class Player : Actor
         jumpForce = 15;
         SetMaxHP(30);
         AdjustXP(0);
+
     }
 
     private void UpdateMovement()

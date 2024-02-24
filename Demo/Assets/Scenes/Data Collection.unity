@@ -207,8 +207,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 99749334}
-        m_TargetAssemblyTypeName: DataConsent, Assembly-CSharp
-        m_MethodName: Consent
+        m_TargetAssemblyTypeName: GameSession, Assembly-CSharp
+        m_MethodName: ConsentGiven
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -464,7 +464,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 99749330}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15c8b914e02c1054bbe6a1bb6d671285, type: 3}
+  m_Script: {fileID: 11500000, guid: 973316e968a344c8ab09a253748601a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &269879261
@@ -501,7 +501,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -30, y: 20}
+  m_AnchoredPosition: {x: -40, y: -1}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &269879263
@@ -524,7 +524,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: MAIN MENU
+  m_text: OPT OUT
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
   m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
@@ -863,9 +863,8 @@ MonoBehaviour:
   m_text: Hi there! We value your privacy and want to be transparent about how we
     handle your data. Our game collects certain information to improve your gaming
     experience and for analytics purposes. Your data will not be shared with third
-    parties without your consent. To consent to data collection, please click the
-    "I agree" button below. If you desire to opt out, please click the "main menu"
-    button below.
+    parties. To consent to data collection, please click the "I agree" button below.
+    If you desire to opt out, please click the "opt out" button below.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
   m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
@@ -1043,7 +1042,7 @@ GameObject:
   - component: {fileID: 1747333541}
   - component: {fileID: 1747333540}
   m_Layer: 5
-  m_Name: Main menu button
+  m_Name: Opt Out button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1114,8 +1113,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 99749334}
-        m_TargetAssemblyTypeName: DataConsent, Assembly-CSharp
-        m_MethodName: MainMenu
+        m_TargetAssemblyTypeName: GameSession, Assembly-CSharp
+        m_MethodName: ConsentNotGiven
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
