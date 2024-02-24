@@ -4,6 +4,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -11,11 +12,10 @@ using UnityEngine.Tilemaps;
 //TODO: Set player position above ground level
 
 
-public class Generate : MonoBehaviour
-{
+public class Generate : MonoBehaviour{
     const int MIN_X = -10;
     const int MAX_X = 59;
-    const int MIN_Y = -22;
+    const int MIN_Y = -42;
     const int MAX_Y = 19;
 
     const int MAX_AMP = 10;
@@ -35,12 +35,12 @@ public class Generate : MonoBehaviour
     public Tile[] tiles = new Tile[6];
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start(){
 
 
         #if WFC_GEN
         int testX = xDim, testY = yDim;
+        // int testX = 5, testY = 5;
         WaveFuncColl test = new WaveFuncColl(testX,testY);
 
         //Generate a horizontal line of grass
@@ -48,7 +48,7 @@ public class Generate : MonoBehaviour
 
         //Generate Grassy Hills
         //FIXME: Some empty tiles with high amplitude (~30)
-        int startY=yDim-20, width=0, wCount=0, currH, prevH=-1, amplitude;
+        int startY=yDim-30, width=0, wCount=0, currH, prevH=-1, amplitude;
         bool goDown = true;
         var rand = new System.Random();
         Hill nextHill = null;
@@ -85,6 +85,8 @@ public class Generate : MonoBehaviour
             prevH = currH;
             wCount++;
         }
+
+
         
         test.run();
 
@@ -172,19 +174,19 @@ enum Tl{ empty, grass_0, dirt_0, stone_0, gravel_0, error_0 }
 //TODO: implement weights for tiles
 class WFCRule{
     public int x, y;
-    public HashSet<Tl> tiles;
-    public WFCRule(int xIn, int yIn, HashSet<Tl> tilesIn){ x=xIn; y=yIn; tiles=tilesIn; }
+    public Dictionary<Tl,float> tiles;
+    public WFCRule(int xIn, int yIn, Dictionary<Tl,float> tilesIn){ x=xIn; y=yIn; tiles=tilesIn; }
 }
 
 
 class WFCQueue{
     int[,] indices;
     int size; //Actual size minus one
-    (int x, int y, HashSet<Tl> tiles)[] queue;
+    (float ent, int x, int y, Dictionary<Tl,float> tiles)[] queue;
 
     public WFCQueue(int x, int y){
         indices = new int[x,y];
-        queue = new (int x, int y, HashSet<Tl> tiles)[x*y];
+        queue = new (float ent, int x, int y, Dictionary<Tl,float> tiles)[x*y];
         size = queue.Length-1;
 
         //Initialize the queue with each tile being able to be any of
@@ -193,8 +195,12 @@ class WFCQueue{
         for(int i = 0; i < x; i++){
             for(int j = 0; j < y; j++){
                 indices[i,j] = i*y + j;
-                queue[indices[i,j]] = (i, j, new HashSet<Tl>(new Tl[] 
-                    {Tl.empty, Tl.dirt_0, Tl.stone_0, Tl.gravel_0}));
+                queue[indices[i,j]] = ((float)1/4, i, j, new Dictionary<Tl,float>{
+                    {Tl.empty, (float)1/4},
+                    {Tl.dirt_0, (float)1/4},
+                    {Tl.stone_0, (float)1/4},
+                    {Tl.gravel_0, (float)1/4}
+                });
             }
         }
     }
@@ -208,7 +214,7 @@ class WFCQueue{
         indices[queue[ind2].x, queue[ind2].y] = ind2;
     }
 
-    public (int x, int y, HashSet<Tl> tiles) pop(){
+    public (float ent, int x, int y, Dictionary<Tl,float> tiles) pop(){
         var output = queue[0];
         queue[0] = queue[size];
 
@@ -216,13 +222,13 @@ class WFCQueue{
         while(true){
             int lCh = (2*i) + 1;
             int rCh = (2*i) + 2;
-            if((lCh >= size || queue[i].tiles.Count <= queue[lCh].tiles.Count) &&
-                (rCh >= size || queue[i].tiles.Count <= queue[rCh].tiles.Count)){
+            if((lCh >= size || queue[i].ent >= queue[lCh].ent) &&
+                (rCh >= size || queue[i].ent >= queue[rCh].ent)){
                 break;
-            } else if(queue[i].tiles.Count > queue[lCh].tiles.Count){
+            } else if(queue[i].ent < queue[lCh].ent){
                 swap(i, lCh);
                 i = lCh;
-            } else if(queue[i].tiles.Count > queue[rCh].tiles.Count){
+            } else if(queue[i].ent < queue[rCh].ent){
                 swap(i, rCh);
                 i = rCh;
             } else Debug.Log("WFCQueue.pop: Should not reach this control path");
@@ -235,7 +241,7 @@ class WFCQueue{
     //Updates the possible tile type a specific tile can be by doing
     //a set intersection between the current list of tiles and the
     //input set, then moves that item up the queue if necessary
-    public void update(int x, int y, HashSet<Tl> intersect){
+    public void update(int x, int y, Dictionary<Tl,float> intersect){
         if(x < 0 || y < 0 || x >= indices.GetLength(0) || y >= indices.GetLength(1)) return;
         /*
          *The second condition in this if statement shouldn't be
@@ -247,14 +253,28 @@ class WFCQueue{
         int i = indices[x,y];
         if(i == -1 || i > size) return;
 
-        queue[i].tiles.IntersectWith(intersect);
+        //TODO: Comment
+        var Keys = queue[i].tiles.Keys.ToList();
+        float divisor = 0;
+        for(int j = 0; j < Keys.Count(); j++){
+            if(!intersect.ContainsKey(Keys[j])) continue;
+            queue[i].tiles[Keys[j]] *= intersect[Keys[j]];
+            divisor += queue[i].tiles[Keys[j]];
+        }
+        float newEntropy = 0;
+        for(int j = 0; j < Keys.Count(); j++){
+            queue[i].tiles[Keys[j]] /= divisor;
+            if(queue[i].tiles[Keys[j]] > newEntropy) newEntropy = queue[i].tiles[Keys[j]];
+        }
+
+        queue[i].ent = (newEntropy != 0) ? newEntropy : 2;
 
         while(true){
             int par = (i-1)/2;
             //This will move the tile up the queue even if it's equal
             //to the parent to ensure WaveFunColl.set() works
             //TODO: I don't think "par < 0" is necessary
-            if(i == 0 || par < 0 || queue[i].tiles.Count > queue[par].tiles.Count) break;
+            if(i == 0 || par < 0 || queue[i].ent < queue[par].ent) break;
             else{
                 swap(i, par);
                 i = par;
@@ -269,7 +289,7 @@ class WFCQueue{
         //TODO: implement depth
         Debug.Log("Size = " + (size+1));
         for(int i = 0; i < size+1; i++){
-            Debug.Log("x: " + queue[i].x + " y: " + queue[i].y + " Tiles: " + queue[i].tiles.Count);
+            Debug.Log("x: " + queue[i].x + " y: " + queue[i].y + " Entropy: " + queue[i].ent);
         }
     }
 }
@@ -287,32 +307,122 @@ class WaveFuncColl{
         //Manually specifying rules for now
         rules = new WFCRule[Enum.GetNames(typeof(Tl)).Length][];
         rules[(int)Tl.empty] = new WFCRule[] {
-            new WFCRule(0, 1, new HashSet<Tl>(new Tl[] {Tl.empty})),
-            new WFCRule(0,-1, new HashSet<Tl>(new Tl[] {Tl.empty, Tl.grass_0})),
-            new WFCRule(1, 0, new HashSet<Tl>(new Tl[] {Tl.empty})),
-            new WFCRule(-1,0, new HashSet<Tl>(new Tl[] {Tl.empty}))
+            new WFCRule(0, 1, new Dictionary<Tl,float>{
+                {Tl.empty, 1},
+                {Tl.dirt_0, 0},
+                {Tl.stone_0, 0},
+                {Tl.gravel_0, 0}
+            }),
+            new WFCRule(0,-1, new Dictionary<Tl,float>{
+                {Tl.empty, 1},
+                {Tl.dirt_0, 0},
+                {Tl.stone_0, 0},
+                {Tl.gravel_0, 0}
+            }),
+            new WFCRule(1, 0, new Dictionary<Tl,float>{
+                {Tl.empty, 1},
+                {Tl.dirt_0, 0},
+                {Tl.stone_0, 0},
+                {Tl.gravel_0, 0}
+            }),
+            new WFCRule(-1,0, new Dictionary<Tl,float>{
+                {Tl.empty, 1},
+                {Tl.dirt_0, 0},
+                {Tl.stone_0, 0},
+                {Tl.gravel_0, 0}
+            })
         };
         rules[(int)Tl.grass_0] = new WFCRule[] {
-            new WFCRule(0, 1, new HashSet<Tl>(new Tl[] {Tl.empty})),
-            new WFCRule(0,-1, new HashSet<Tl>(new Tl[] {Tl.dirt_0, Tl.gravel_0})),
+            new WFCRule(0, 1, new Dictionary<Tl,float>{
+                {Tl.empty, 1},
+                {Tl.dirt_0, 0},
+                {Tl.stone_0, 0},
+                {Tl.gravel_0, 0}
+            }),
+            new WFCRule(0,-1, new Dictionary<Tl,float>{
+                {Tl.empty, 0},
+                {Tl.dirt_0, (float)1/2},
+                {Tl.stone_0, 0},
+                {Tl.gravel_0, (float)1/2}
+            })
         };
         rules[(int)Tl.dirt_0] = new WFCRule[] {
-            new WFCRule(0, 1, new HashSet<Tl>(new Tl[] {Tl.dirt_0, Tl.gravel_0})),
-            new WFCRule(0,-1, new HashSet<Tl>(new Tl[] {Tl.dirt_0, Tl.gravel_0})),
-            new WFCRule(1, 0, new HashSet<Tl>(new Tl[] {Tl.dirt_0, Tl.gravel_0})),
-            new WFCRule(-1,0, new HashSet<Tl>(new Tl[] {Tl.dirt_0, Tl.gravel_0}))
+            new WFCRule(0, 1, new Dictionary<Tl,float>{
+                {Tl.empty, 0},
+                {Tl.dirt_0, 0.89f},
+                {Tl.stone_0, 0.01f},
+                {Tl.gravel_0, 0.10f}
+            }),
+            new WFCRule(0,-1, new Dictionary<Tl,float>{
+                {Tl.empty, 0},
+                {Tl.dirt_0, 0.79f},
+                {Tl.stone_0, 0.01f},
+                {Tl.gravel_0, 0.20f}
+            }),
+            new WFCRule(1, 0, new Dictionary<Tl,float>{
+                {Tl.empty, 0},
+                {Tl.dirt_0, 0.89f},
+                {Tl.stone_0, 0.01f},
+                {Tl.gravel_0, 0.10f}
+            }),
+            new WFCRule(-1,0, new Dictionary<Tl,float>{
+                {Tl.empty, 0},
+                {Tl.dirt_0, 0.89f},
+                {Tl.stone_0, 0.01f},
+                {Tl.gravel_0, 0.10f}
+            })
         };
         rules[(int)Tl.stone_0] = new WFCRule[] {
-            new WFCRule(0, 1, new HashSet<Tl>(new Tl[] {Tl.stone_0, Tl.gravel_0})),
-            new WFCRule(0,-1, new HashSet<Tl>(new Tl[] {Tl.stone_0, Tl.gravel_0})),
-            new WFCRule(1, 0, new HashSet<Tl>(new Tl[] {Tl.stone_0, Tl.gravel_0})),
-            new WFCRule(-1,0, new HashSet<Tl>(new Tl[] {Tl.stone_0, Tl.gravel_0}))
+            new WFCRule(0, 1, new Dictionary<Tl,float>{
+                {Tl.empty, 0},
+                {Tl.dirt_0, 0.01f},
+                {Tl.stone_0, 0.89f},
+                {Tl.gravel_0, 0.10f}
+            }),
+            new WFCRule(0,-1, new Dictionary<Tl,float>{
+                {Tl.empty, 0},
+                {Tl.dirt_0, 0.01f},
+                {Tl.stone_0, 0.98f},
+                {Tl.gravel_0, 0.01f}
+            }),
+            new WFCRule(1, 0, new Dictionary<Tl,float>{
+                {Tl.empty, 0},
+                {Tl.dirt_0, 0.01f},
+                {Tl.stone_0, 0.90f},
+                {Tl.gravel_0, 0.09f}
+            }),
+            new WFCRule(-1,0, new Dictionary<Tl,float>{
+                {Tl.empty, 0},
+                {Tl.dirt_0, 0.01f},
+                {Tl.stone_0, 0.90f},
+                {Tl.gravel_0, 0.09f}
+            })
         };
         rules[(int)Tl.gravel_0] = new WFCRule[] {
-            new WFCRule(0, 1, new HashSet<Tl>(new Tl[] {Tl.dirt_0, Tl.stone_0, Tl.gravel_0})),
-            new WFCRule(0,-1, new HashSet<Tl>(new Tl[] {Tl.dirt_0, Tl.stone_0, Tl.gravel_0})),
-            new WFCRule(1, 0, new HashSet<Tl>(new Tl[] {Tl.dirt_0, Tl.stone_0, Tl.gravel_0})),
-            new WFCRule(-1,0, new HashSet<Tl>(new Tl[] {Tl.dirt_0, Tl.stone_0, Tl.gravel_0}))
+            new WFCRule(0, 1, new Dictionary<Tl,float>{
+                {Tl.empty, 0},
+                {Tl.dirt_0, 0.25f},
+                {Tl.stone_0, 0.01f},
+                {Tl.gravel_0, 0.74f}
+            }),
+            new WFCRule(0,-1, new Dictionary<Tl,float>{
+                {Tl.empty, 0},
+                {Tl.dirt_0, 0.01f},
+                {Tl.stone_0, 0.39f},
+                {Tl.gravel_0, 0.60f}
+            }),
+            new WFCRule(1, 0, new Dictionary<Tl,float>{
+                {Tl.empty, 0},
+                {Tl.dirt_0, 0.05f},
+                {Tl.stone_0, 0.10f},
+                {Tl.gravel_0, 0.85f}
+            }),
+            new WFCRule(-1,0, new Dictionary<Tl,float>{
+                {Tl.empty, 0},
+                {Tl.dirt_0, 0.05f},
+                {Tl.stone_0, 0.10f},
+                {Tl.gravel_0, 0.85f}
+            })
         };
         rules[(int)Tl.error_0] = new WFCRule[] {};
     }
@@ -331,7 +441,7 @@ class WaveFuncColl{
 
     //Sets a tile to a specific type
     public void set(int x, int y, Tl tile){
-        queue.update(x, y, new HashSet<Tl>(new Tl[] {}));
+        queue.update(x, y, new Dictionary<Tl,float>());
         var setTile = queue.pop();
         map[x,y] = tile;
         update(x, y);
@@ -339,20 +449,23 @@ class WaveFuncColl{
 
     //Generate the map
     public void run(){
+        //TODO
         var rand = new System.Random();
         while(queue.getSize() > 0){
-            //Get the possible tiles of the lowest entropy location
             var setTile = queue.pop();
-            Tl[] possible = new Tl[setTile.tiles.Count];
-            setTile.tiles.CopyTo(possible);
 
-            //Pick randomly from possible tiles, then update according to rules
-            if(possible.Length == 0){
+            double randVal = rand.NextDouble();
+            foreach(var tile in setTile.tiles){
+                // Debug.Log(tile.Value);
+                randVal -= tile.Value;
+                if(randVal < 0){
+                    map[setTile.x, setTile.y] = tile.Key;
+                    break;
+                }
+            }
+            if(randVal >= 0){
                 map[setTile.x, setTile.y] = Tl.error_0;
-                Debug.Log("Impossible Combination at " + setTile.x + ", " + setTile.y);
-            } else{
-                int temp = rand.Next(0, possible.Length);
-                map[setTile.x, setTile.y] = possible[temp];
+                Debug.Log("Impossible Combination at " + setTile.x + ", " + setTile.y + "; RandVal = " + randVal);
             }
 
             update(setTile.x, setTile.y);
