@@ -693,7 +693,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1195110888}
-        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+        m_TargetAssemblyTypeName: GameSession, Assembly-CSharp
         m_MethodName: DataCollection
         m_Mode: 1
         m_Arguments:
@@ -845,7 +845,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1195110884}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b839116af698f40a992270d254761dac, type: 3}
+  m_Script: {fileID: 11500000, guid: 973316e968a344c8ab09a253748601a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1339381342
@@ -932,7 +932,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1195110888}
-        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+        m_TargetAssemblyTypeName: GameSession, Assembly-CSharp
         m_MethodName: PlayGame
         m_Mode: 1
         m_Arguments:
