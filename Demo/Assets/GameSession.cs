@@ -4,15 +4,26 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.Services.Core;
 using Unity.Services.Analytics;
+using UnityEngine.Analytics;
+using System;
+
 
 public class GameSession : MonoBehaviour
 {
-    private bool data_consent = false;
     //private PlayerData pd;
+    private void Start()
+    {
+        PlayerPrefs.SetInt("DataConsent", 0);
+    }
 
     public void PlayGame()
     {
-        //TODO: need to track start session time (if data consent given)
+        if (PlayerPrefs.GetInt("DataConsent",0) == 1)
+        {
+            Debug.Log("CONSENT GIVEN");
+            String sessionStart = DateTime.Now.ToString();
+            Analytics.CustomEvent("gameStarted",new Dictionary<string, object> { { "Start of Session", sessionStart } });
+        }
         SceneManager.LoadSceneAsync("SampleScene");
     }
 
@@ -24,7 +35,8 @@ public class GameSession : MonoBehaviour
 
     public void ConsentGiven()
     {
-        data_consent = true;
+        // set dataConsent to true
+        PlayerPrefs.SetInt("DataConsent", 1);
         // init unity analytics
         UnityServices.InitializeAsync();
         AnalyticsService.Instance.StartDataCollection();
@@ -33,20 +45,19 @@ public class GameSession : MonoBehaviour
 
     public void ConsentNotGiven()
     {
-        data_consent = false;
+        PlayerPrefs.SetInt("DataConsent", 0);
         SceneManager.LoadSceneAsync("Main Menu");
-    }
-
-    public bool GetConsentStatus()
-    {
-        return data_consent;
     }
 
     private void ExitGame()
     {
         if (Input.GetKey(KeyCode.Escape))
         {
-            //TODO: need to track end session time (if data consent was given)
+            if (PlayerPrefs.GetInt("DataConsent", 0) == 1)
+            {
+                String sessionEnd = DateTime.Now.ToString();
+                Analytics.CustomEvent("gameEnded", new Dictionary<string, object> { { "End of Session", sessionEnd } });
+            }
             SceneManager.LoadSceneAsync("Main Menu");
         }
     }

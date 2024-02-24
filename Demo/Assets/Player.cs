@@ -30,7 +30,6 @@ public class Player : Actor
     // Start is called before the first frame update
     private void Start()
     {
-        Debug.Log("HERE");
         rb = GetComponent<Rigidbody2D>();
         walkForce = 9;
         jumpForce = 15;
