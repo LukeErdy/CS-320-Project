@@ -48,7 +48,7 @@ public class Generate : MonoBehaviour{
 
         //Generate Grassy Hills
         //FIXME: Some empty tiles with high amplitude (~30)
-        int startY=yDim-35, width=0, wCount=0, currH, prevH=-1, amplitude;
+        int startY=yDim-30, width=0, wCount=0, currH, prevH=-1, amplitude;
         bool goDown = true;
         var rand = new System.Random();
         Hill nextHill = null;
@@ -349,79 +349,79 @@ class WaveFuncColl{
         rules[(int)Tl.dirt_0] = new WFCRule[] {
             new WFCRule(0, 1, new Dictionary<Tl,float>{
                 {Tl.empty, 0},
-                {Tl.dirt_0, (float)1/2},
-                {Tl.stone_0, 0},
-                {Tl.gravel_0, (float)1/2}
+                {Tl.dirt_0, 0.89f},
+                {Tl.stone_0, 0.01f},
+                {Tl.gravel_0, 0.10f}
             }),
             new WFCRule(0,-1, new Dictionary<Tl,float>{
                 {Tl.empty, 0},
-                {Tl.dirt_0, (float)1/2},
-                {Tl.stone_0, 0},
-                {Tl.gravel_0, (float)1/2}
+                {Tl.dirt_0, 0.79f},
+                {Tl.stone_0, 0.01f},
+                {Tl.gravel_0, 0.20f}
             }),
             new WFCRule(1, 0, new Dictionary<Tl,float>{
                 {Tl.empty, 0},
-                {Tl.dirt_0, (float)1/2},
-                {Tl.stone_0, 0},
-                {Tl.gravel_0, (float)1/2}
+                {Tl.dirt_0, 0.89f},
+                {Tl.stone_0, 0.01f},
+                {Tl.gravel_0, 0.10f}
             }),
             new WFCRule(-1,0, new Dictionary<Tl,float>{
                 {Tl.empty, 0},
-                {Tl.dirt_0, (float)1/2},
-                {Tl.stone_0, 0},
-                {Tl.gravel_0, (float)1/2}
+                {Tl.dirt_0, 0.89f},
+                {Tl.stone_0, 0.01f},
+                {Tl.gravel_0, 0.10f}
             })
         };
         rules[(int)Tl.stone_0] = new WFCRule[] {
             new WFCRule(0, 1, new Dictionary<Tl,float>{
                 {Tl.empty, 0},
-                {Tl.dirt_0, 0},
-                {Tl.stone_0, (float)1/2},
-                {Tl.gravel_0, (float)1/2}
+                {Tl.dirt_0, 0.01f},
+                {Tl.stone_0, 0.89f},
+                {Tl.gravel_0, 0.10f}
             }),
             new WFCRule(0,-1, new Dictionary<Tl,float>{
                 {Tl.empty, 0},
-                {Tl.dirt_0, 0},
-                {Tl.stone_0, (float)1/2},
-                {Tl.gravel_0, (float)1/2}
+                {Tl.dirt_0, 0.01f},
+                {Tl.stone_0, 0.98f},
+                {Tl.gravel_0, 0.01f}
             }),
             new WFCRule(1, 0, new Dictionary<Tl,float>{
                 {Tl.empty, 0},
-                {Tl.dirt_0, 0},
-                {Tl.stone_0, (float)1/2},
-                {Tl.gravel_0, (float)1/2}
+                {Tl.dirt_0, 0.01f},
+                {Tl.stone_0, 0.90f},
+                {Tl.gravel_0, 0.09f}
             }),
             new WFCRule(-1,0, new Dictionary<Tl,float>{
                 {Tl.empty, 0},
-                {Tl.dirt_0, 0},
-                {Tl.stone_0, (float)1/2},
-                {Tl.gravel_0, (float)1/2}
+                {Tl.dirt_0, 0.01f},
+                {Tl.stone_0, 0.90f},
+                {Tl.gravel_0, 0.09f}
             })
         };
         rules[(int)Tl.gravel_0] = new WFCRule[] {
             new WFCRule(0, 1, new Dictionary<Tl,float>{
                 {Tl.empty, 0},
-                {Tl.dirt_0, (float)1/3},
-                {Tl.stone_0, (float)1/3},
-                {Tl.gravel_0, (float)1/3}
+                {Tl.dirt_0, 0.25f},
+                {Tl.stone_0, 0.01f},
+                {Tl.gravel_0, 0.74f}
             }),
             new WFCRule(0,-1, new Dictionary<Tl,float>{
                 {Tl.empty, 0},
-                {Tl.dirt_0, (float)1/3},
-                {Tl.stone_0, (float)1/3},
-                {Tl.gravel_0, (float)1/3}
+                {Tl.dirt_0, 0.01f},
+                {Tl.stone_0, 0.39f},
+                {Tl.gravel_0, 0.60f}
             }),
             new WFCRule(1, 0, new Dictionary<Tl,float>{
                 {Tl.empty, 0},
-                {Tl.dirt_0, (float)1/3},
-                {Tl.stone_0, (float)1/3},
-                {Tl.gravel_0, (float)1/3}
+                {Tl.dirt_0, 0.05f},
+                {Tl.stone_0, 0.10f},
+                {Tl.gravel_0, 0.85f}
             }),
             new WFCRule(-1,0, new Dictionary<Tl,float>{
                 {Tl.empty, 0},
-                {Tl.dirt_0, (float)1/3},
-                {Tl.stone_0, (float)1/3},
-                {Tl.gravel_0, (float)1/3}
+                {Tl.dirt_0, 0.05f},
+                {Tl.stone_0, 0.10f},
+                {Tl.gravel_0, 0.85f}
             })
         };
         rules[(int)Tl.error_0] = new WFCRule[] {};
@@ -467,7 +467,7 @@ class WaveFuncColl{
                 map[setTile.x, setTile.y] = Tl.error_0;
                 Debug.Log("Impossible Combination at " + setTile.x + ", " + setTile.y + "; RandVal = " + randVal);
             }
-            
+
             update(setTile.x, setTile.y);
         }
     }
