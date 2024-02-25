@@ -1,6 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Encapsulates the behavior of an entity with HP, a <see cref="SpriteRenderer"/>, and a <see cref="Rigidbody2D"/>.
+/// </summary>
 public class Actor : MonoBehaviour
 {
     //HP variables
@@ -12,8 +17,7 @@ public class Actor : MonoBehaviour
     protected float walkForce = 1f;
     protected float jumpForce = 1f;
 
-    //depends on terrain
-    protected float lowThreshold = -20;
+    public int lowThreshold {get { return Generate.MIN_Y; }} 
 
     public SpriteRenderer spriteRenderer;
     public Rigidbody2D rb;
@@ -24,10 +28,11 @@ public class Actor : MonoBehaviour
     public void AdjustHealth(float change)
     {
         _currentHP += change;
-        if (_currentHP < 0f)
+        if (_currentHP <= 0f)
         {
             _currentHP = 0f;
-            //TODO: trigger death sequence
+            if (this is Enemy e) StartCoroutine(e.Die());
+            //TODO: trigger death sequence for player
         }
         else if (_currentHP > maxHP)
         {

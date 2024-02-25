@@ -20,13 +20,13 @@ public class EnemySpawn : MonoBehaviour
         int spawnCount = Random.Range(minEnemies, maxEnemies + 1);
         for (int i = 0; i < spawnCount; i++)
         {
-            var randomPos = GetSpawnLocation();
-            //Debug.Log(randomPos);
+            var pos = GetSpawnLocation();
             GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
-            var obj = Instantiate(enemyPrefab, randomPos, Quaternion.identity);
+            var obj = Instantiate(enemyPrefab, pos, Quaternion.identity);
             obj.name = $"{enemyPrefab.name}{i+1}";
+            //Debug.Log("Spawned enemy at: " + pos);
         }
-        //Debug.Log($"Spawned {spawnCount} enemies");
+        Debug.Log($"Spawned {spawnCount} enemies");
     }
 
     private Vector3 GetSpawnLocation()
@@ -42,6 +42,7 @@ public class EnemySpawn : MonoBehaviour
 
         //Get the center of the random cell
         Vector3 pos = tilemap.GetCellCenterWorld(cell);
+        pos.y += 1;
         return pos;
     }
 }
