@@ -13,10 +13,10 @@ using UnityEngine.Tilemaps;
 
 
 public class Generate : MonoBehaviour{
-    const int MIN_X = -10;
-    const int MAX_X = 59;
-    const int MIN_Y = -42;
-    const int MAX_Y = 19;
+    public const int MIN_X = -10;
+    public const int MAX_X = 59;
+    public const int MIN_Y = -42;
+    public const int MAX_Y = 19;
 
     const int MAX_AMP = 10;
     const int MIN_AMP = 3;

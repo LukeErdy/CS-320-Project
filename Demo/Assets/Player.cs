@@ -4,32 +4,31 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Player : Actor
+public sealed class Player : Actor
 {
     //Debug
-    bool canFly = true;
+    bool canFly = false;
 
-    // Player Sprites
-    public Sprite facingRight;
-    public Sprite facingLeft;
-    // public Sprite jumping;
+    //Sprite variables
+    public Sprite[] leftSprites;
+    public Sprite[] rightSprites;
+    private Sprite[] currentSprites = null;
+    private int spriteIndex = 0;
 
-    public Vector2 boxSize;
-    public float castDistance;
-    public LayerMask groundLayer;
-    float dirX;
+    //Attack variables
+    public int meleeDmg = 2;
 
+    //Health and XP variables
     public HealthBar healthBar;
-
-    //XP variables
     public XPBar xpBar;
     float requiredXP = 45;
     public float currentXP;
 
-<<<<<<< HEAD
-=======
-    public float lastVelocity = 0f;
->>>>>>> main
+    //Other variables
+    public Vector2 boxSize;
+    public float castDistance;
+    public LayerMask groundLayer;
+    private float lastVelocity = 0f;
 
     // Start is called before the first frame update
     private void Start()
@@ -39,35 +38,36 @@ public class Player : Actor
         jumpForce = 15;
         SetMaxHP(30);
         AdjustXP(0);
-
     }
 
     private void UpdateMovement()
     {
         // Get the walk direction and apply a horizontal force to the player
-        dirX = Input.GetAxisRaw("Horizontal"); // GetAxisRaw instead of GetAxis so that it returns to 0 immediately
+        float dirX = Input.GetAxisRaw("Horizontal");
         rb.velocity = new Vector2(walkForce * dirX, rb.velocity.y);
 
         if (Input.GetButtonDown("Jump") && (CheckIfGrounded() || canFly)) // Using Unity's input manager for greater flexibility
         {
             // Apply a vertical force to the object to which this script is assigned (in this case, the player)
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-            AdjustXP(3f);// and gain XP from spamming space (you're welcome Caleb)
+            //AdjustXP(3f);// and gain XP from spamming space (you're welcome Caleb)
         }
 
-        // Change sprite based on movement direction
-        if (dirX == 1) spriteRenderer.sprite = facingRight;
-        else if (dirX == -1) spriteRenderer.sprite = facingLeft;
+        //Change sprite
+        if (currentSprites == null) currentSprites = rightSprites;
+        if (dirX == 1) currentSprites = rightSprites;
+        else if (dirX == -1) currentSprites = leftSprites;
+        spriteIndex = Input.GetKey("q") ? 1 : 0;                //if attacking, change to attacking sprite
+        spriteRenderer.sprite = currentSprites[spriteIndex];
     }
 
     private void CheckHealth()
     {
         if (currentHP <= 0)
         {
-            //TODO: How do we want to handle death?
-            //rn I'm just respawning him
+            //TODO: How do we want to handle death? rn I'm just respawning him
             rb.velocity = new Vector2(0, 0);
-            transform.position = new Vector3(0, 10, transform.position.z);
+            transform.position = new Vector3(Generate.MIN_X + 1, Generate.MAX_Y - 1, transform.position.z);
             AdjustHealth(maxHP);
         }
 
@@ -80,7 +80,8 @@ public class Player : Actor
 
     private void CheckFallDamage()
     {
-        if (lastVelocity < -30f && CheckIfGrounded()) {
+        if (lastVelocity < -30f && CheckIfGrounded())
+        {
             AdjustHealth(lastVelocity * 0.009f);
         }
         lastVelocity = rb.velocity.y;
@@ -93,10 +94,36 @@ public class Player : Actor
         CheckFallDamage();
     }
 
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        //Debug.Log("OnCollisionEnter2D: " + col.gameObject);
+        var enemy = col.gameObject.GetComponent<Enemy>();
+        if (enemy != null && Input.GetKey("q")) 
+        {
+            enemy.AdjustHealth(-1* meleeDmg);
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D col)
+    {
+        //Debug.Log("OnCollisionStay2D: " + col.gameObject);
+        var enemy = col.gameObject.GetComponent<Enemy>();
+        if (enemy != null && Input.GetKey("q"))
+        {
+            enemy.AdjustHealth(-1 * meleeDmg);
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D col)
+    {
+        //Debug.Log("OnCollisionExit2D: " + col.gameObject);
+    }
+
     public void AdjustXP(float change)
     {
         currentXP += change;
-        if (currentXP >= requiredXP) {
+        if (currentXP >= requiredXP)
+        {
             currentXP = 0f;
             requiredXP *= 1.6f;
         }

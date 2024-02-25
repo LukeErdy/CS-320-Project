@@ -1,6 +1,9 @@
 using System;
 using System.Timers;
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 public class Enemy : Actor
 {
@@ -10,6 +13,7 @@ public class Enemy : Actor
     protected int spriteIndex = 0;
     protected Timer spriteTimer;
 
+    private bool isDying = false;
     protected float sightRadius = 10f;
 
     public override string ToString()
@@ -29,6 +33,7 @@ public class Enemy : Actor
 
     protected void ChangeSprite(System.Object source, ElapsedEventArgs e)
     {
+        if (isDying) return;
         if (null == currentSprites) currentSprites = movingSprites;
         spriteIndex = spriteIndex + 1 >= currentSprites.Length ? 0 : spriteIndex + 1;
     }
@@ -39,8 +44,29 @@ public class Enemy : Actor
         return distance <= sightRadius;
     }
 
-    public void Update()
+    public IEnumerator Die()
     {
+        //Reset sprite
+        isDying = true;
+        rb.velocity = new Vector2(0, 0);
+        currentSprites = movingSprites;
+        spriteIndex = 0;
+        spriteRenderer.sprite = currentSprites[spriteIndex];
+        spriteRenderer.flipY = true;
+
+        yield return new WaitForSeconds(2);
+
+        //Give player XP for the kill
+        var player = GameObject.Find("Player").GetComponent<Player>();
+        player.AdjustXP(10);
+
+        //Finally remove GameObject from scene
+        Destroy(gameObject);
+    }
+
+    private void Update()
+    {
+        if (isDying) return;
         var playerLoc = GameObject.Find("Player").transform.position;
         if (WithinSightRadius((Vector2)playerLoc))
         {
@@ -57,17 +83,16 @@ public class Enemy : Actor
             else if (distX < 0) spriteRenderer.flipX = true;
             spriteRenderer.sprite = currentSprites[spriteIndex];
         }
-
         //If enemy falls below a certain threshold, kill them
         if (transform.position.y < lowThreshold)
         {
-            AdjustHealth(-1*maxHP);
-            Destroy(gameObject);
+            Die();
         }
     }
 
     protected void OnCollisionEnter2D(Collision2D col)
     {
+        if (isDying) return;
         //Debug.Log("OnCollisionEnter2D: " + col.gameObject);
         if (col.gameObject.name.Equals("Player"))
         {
@@ -79,6 +104,7 @@ public class Enemy : Actor
 
     protected void OnCollisionStay2D(Collision2D col)
     {
+        if (isDying) return;
         //Debug.Log("OnCollisionStay2D: " + col.gameObject);
         if (col.gameObject.name.Equals("Player"))
         {
@@ -94,6 +120,7 @@ public class Enemy : Actor
 
     protected void OnCollisionExit2D(Collision2D col)
     {
+        if (isDying) return;
         //Debug.Log("OnCollisionExit2D: " + col.gameObject);
         if (col.gameObject.name.Equals("Player"))
         {
