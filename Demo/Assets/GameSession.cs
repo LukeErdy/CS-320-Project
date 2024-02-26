@@ -1,28 +1,28 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.Services.Core;
 using Unity.Services.Analytics;
-using UnityEngine.Analytics;
 using System;
-
 
 public class GameSession : MonoBehaviour
 {
-    //private PlayerData pd;
-    private void Start()
-    {
-        PlayerPrefs.SetInt("DataConsent", 0);
-    }
+    String sessionStart;
+    // enemies killed
+    // playerDeaths
+    // levels completed?
 
     public void PlayGame()
     {
         if (PlayerPrefs.GetInt("DataConsent",0) == 1)
         {
-            Debug.Log("CONSENT GIVEN");
-            String sessionStart = DateTime.Now.ToString();
-            Analytics.CustomEvent("gameStarted",new Dictionary<string, object> { { "Start of Session", sessionStart } });
+            sessionStart = System.DateTime.Now.ToString();
+            // start data collection
+            UnityServices.InitializeAsync();
+            AnalyticsService.Instance.StartDataCollection();
+            AnalyticsService.Instance.RecordEvent("sessionStarted");
+
+            // to send the event immediately
+            AnalyticsService.Instance.Flush();
         }
         SceneManager.LoadSceneAsync("SampleScene");
     }
@@ -35,17 +35,15 @@ public class GameSession : MonoBehaviour
 
     public void ConsentGiven()
     {
-        // set dataConsent to true
         PlayerPrefs.SetInt("DataConsent", 1);
-        // init unity analytics
-        UnityServices.InitializeAsync();
-        AnalyticsService.Instance.StartDataCollection();
         SceneManager.LoadSceneAsync("Main Menu");
     }
 
     public void ConsentNotGiven()
     {
         PlayerPrefs.SetInt("DataConsent", 0);
+        // stop data collection
+        AnalyticsService.Instance.StopDataCollection();
         SceneManager.LoadSceneAsync("Main Menu");
     }
 
@@ -55,15 +53,65 @@ public class GameSession : MonoBehaviour
         {
             if (PlayerPrefs.GetInt("DataConsent", 0) == 1)
             {
-                String sessionEnd = DateTime.Now.ToString();
-                Analytics.CustomEvent("gameEnded", new Dictionary<string, object> { { "End of Session", sessionEnd } });
+                CustomEvent myEvent = new CustomEvent("sessionEnded")
+            {
+                {"sessionTimestamp",sessionStart}
+                // also want to track enemies killed and playerDeaths in session
+            };
+                AnalyticsService.Instance.RecordEvent(myEvent);
             }
             SceneManager.LoadSceneAsync("Main Menu");
         }
     }
 
+    private void MovementType()
+    {
+        if (Input.GetKeyDown("left"))
+        {
+            // backward movement
+            trackMovement("backwards");
+        }
+        if (Input.GetKeyDown("right"))
+        {
+            // forward movement
+            trackMovement("forwards");
+        }
+        if (Input.GetButtonDown("Jump"))
+        {
+            // jump movement
+            trackMovement("jump");
+        }
+        if (Input.GetKeyDown("q"))
+        {
+            // attack movement
+            trackMovement("attack");
+        }
+        if (Input.GetButtonDown("Jump") && Input.GetKeyDown("right"))
+        {
+            // jump forward
+            trackMovement("jump forwards");
+        }
+        if (Input.GetButtonDown("Jump") && Input.GetKeyDown("left"))
+        {
+            // jump backwards
+            trackMovement("jump backwards");
+        }
+    }
+
+    private void trackMovement(String movementType)
+    {
+        CustomEvent myEvent = new CustomEvent("playerMovement")
+            {
+                {"movementType",movementType},
+                {"sessionTimestamp",sessionStart}
+            };
+        AnalyticsService.Instance.RecordEvent(myEvent);
+
+    }
+
     private void Update()
     {
         ExitGame();
+        MovementType();
     }
 }

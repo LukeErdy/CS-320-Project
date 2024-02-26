@@ -28971,15 +28971,15 @@ MonoBehaviour:
   - {fileID: 1596494608, guid: 5da909d76c2a26b22978895a5ca0d84d, type: 3}
   - {fileID: -1514071669, guid: 5da909d76c2a26b22978895a5ca0d84d, type: 3}
   - {fileID: -563831968, guid: 5da909d76c2a26b22978895a5ca0d84d, type: 3}
+  meleeDmg: 2
+  healthBar: {fileID: 937385158}
+  xpBar: {fileID: 926078464}
+  currentXP: 0
   boxSize: {x: 1.43, y: 1.22}
   castDistance: 0.5
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  lastVelocity: 0
-  healthBar: {fileID: 937385158}
-  xpBar: {fileID: 926078464}
-  currentXP: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -29095,7 +29095,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 519420028}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b0443e0533dc44b9b5eed6234dfb3f8, type: 3}
+  m_Script: {fileID: 11500000, guid: 973316e968a344c8ab09a253748601a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &736656172
@@ -29353,7 +29353,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420035}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Exitgame, Assembly-CSharp
         m_MethodName: ExitGame
         m_Mode: 1
