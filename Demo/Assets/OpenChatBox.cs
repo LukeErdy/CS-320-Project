@@ -5,14 +5,14 @@ using UnityEngine;
 public class OpenChatBox : MonoBehaviour
 {
     public SpriteRenderer spriteRenderer;
-    public PlayerMovement player;
+    public Player player;
     public Sprite Open;
     public Sprite Close;
     public int keyStrokes = 0;
 
     void Start()
     {
-        player = GameObject.Find("Player").GetComponent<PlayerMovement>();
+        player = GameObject.Find("Player").GetComponent<Player>();
     }
 
     void Update()

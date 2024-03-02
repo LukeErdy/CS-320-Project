@@ -29,7 +29,7 @@ public sealed class Player : Actor
     public float castDistance;
     public LayerMask groundLayer;
     private float lastVelocity = 0f;
-
+    public bool chatLock = false;
 
     // Start is called before the first frame update
     private void Start()

@@ -100,13 +100,16 @@ public class GameSession : MonoBehaviour
 
     private void trackMovement(String movementType)
     {
-        CustomEvent myEvent = new CustomEvent("playerMovement")
+        try
+        {
+            CustomEvent myEvent = new CustomEvent("playerMovement")
             {
                 {"movementType",movementType},
                 {"sessionTimestamp",sessionStart}
             };
-        AnalyticsService.Instance.RecordEvent(myEvent);
-
+            AnalyticsService.Instance.RecordEvent(myEvent);
+        }
+        catch { }
     }
 
     private void Update()
