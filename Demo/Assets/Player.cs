@@ -15,9 +15,6 @@ public sealed class Player : Actor
     private Sprite[] currentSprites = null;
     private int spriteIndex = 0;
 
-    //Attack variables
-    public int meleeDmg = 2;
-
     //Health and XP variables
     public HealthBar healthBar;
     public XPBar xpBar;
@@ -39,6 +36,7 @@ public sealed class Player : Actor
         jumpForce = 15;
         SetMaxHP(30);
         AdjustXP(0);
+        meleeDmg = 2;
     }
 
     private void UpdateMovement()
@@ -100,7 +98,7 @@ public sealed class Player : Actor
     {
         var enemyDir = (e.transform.position - this.transform.position).normalized.x;
         var playerDir = Input.GetAxis("Horizontal");
-        Debug.Log($"enemy: {enemyDir}, player: {playerDir}");
+        //Debug.Log($"enemy: {enemyDir}, player: {playerDir}");
         if (enemyDir < 0 && playerDir < 0) return true;
         else if (enemyDir > 0 && playerDir > 0) return true;
         else return false;

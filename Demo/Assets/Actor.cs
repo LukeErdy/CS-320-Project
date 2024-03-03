@@ -14,16 +14,18 @@ public class Actor : MonoBehaviour
     public float currentHP { get { return _currentHP; } }
     public float maxHP { get { return _maxHP; } }
 
+    //Moving/location variables
     protected float walkForce = 1f;
     protected float jumpForce = 1f;
-
     public int lowThreshold {get { return Generate.MIN_Y; }} 
 
     public SpriteRenderer spriteRenderer;
     public Rigidbody2D rb;
     public float posX { get { if (rb) return rb.position[0]; else return 0; } }
     public float posY { get { if (rb) return rb.position[1]; else return 0; } }
-    
+
+    //Attack variables
+    protected uint meleeDmg = 1;
 
     public void AdjustHealth(float change)
     {
