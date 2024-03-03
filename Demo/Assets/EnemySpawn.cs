@@ -21,9 +21,12 @@ public class EnemySpawn : MonoBehaviour
         for (int i = 0; i < spawnCount; i++)
         {
             var pos = GetSpawnLocation();
-            GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
+            GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)]; 
             var obj = Instantiate(enemyPrefab, pos, Quaternion.identity);
             obj.name = $"{enemyPrefab.name}{i+1}";
+            //var sr = obj.GetComponent<SpriteRenderer>();
+            //var e = obj.GetComponent<Enemy>();
+            //e.spriteRenderer = sr;
             //Debug.Log("Spawned enemy at: " + pos);
         }
         Debug.Log($"Spawned {spawnCount} enemies");

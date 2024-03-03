@@ -80,8 +80,8 @@ public class Enemy : Actor
             else rb.velocity = new Vector2(walkForce * distX, 0);
 
             //Change sprite based on movement direction
-            if (distX > 0) spriteRenderer.flipX = false;
-            else if (distX < 0) spriteRenderer.flipX = true;
+            if (distX > 0) spriteRenderer.flipX = false; //false
+            else if (distX < 0) spriteRenderer.flipX = true; //true
             spriteRenderer.sprite = currentSprites[spriteIndex];
         }
         //If enemy falls below a certain threshold, kill them
@@ -109,13 +109,8 @@ public class Enemy : Actor
         //Debug.Log("OnCollisionStay2D: " + col.gameObject);
         if (col.gameObject.name.Equals("Player"))
         {
-            //TODO: check if rodent is facing correct direction in order for the bite to be effective
-            /*ContactPoint2D[] contacts = new ContactPoint2D[col.contactCount];
-            col.GetContacts(contacts);
-            for (int i = 0; i < contactCount; i++)
-                Debug.Log(contacts[i].point + " " + contacts[i].normal);*/
             var player = col.gameObject.GetComponent<Player>();
-            if (spriteIndex == 1) player.AdjustHealth(-1);
+            //if (spriteIndex == 1) player.AdjustHealth(-1);
         }
     }
 

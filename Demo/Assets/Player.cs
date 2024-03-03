@@ -96,13 +96,26 @@ public sealed class Player : Actor
         CheckFallDamage();
     }
 
+    private bool IsFacing(Enemy e)
+    {
+        var enemyDir = (e.transform.position - this.transform.position).normalized.x;
+        var playerDir = Input.GetAxis("Horizontal");
+        Debug.Log($"enemy: {enemyDir}, player: {playerDir}");
+        if (enemyDir < 0 && playerDir < 0) return true;
+        else if (enemyDir > 0 && playerDir > 0) return true;
+        else return false;
+    }
+
     private void OnCollisionEnter2D(Collision2D col)
     {
         //Debug.Log("OnCollisionEnter2D: " + col.gameObject);
         var enemy = col.gameObject.GetComponent<Enemy>();
-        if (enemy != null && Input.GetKey("q")) 
+        if (enemy != null)
         {
-            enemy.AdjustHealth(-1* meleeDmg);
+            if (IsFacing(enemy) && Input.GetKey("q"))
+            {
+                enemy.AdjustHealth(-1 * meleeDmg);
+            }
         }
     }
 
@@ -110,9 +123,11 @@ public sealed class Player : Actor
     {
         //Debug.Log("OnCollisionStay2D: " + col.gameObject);
         var enemy = col.gameObject.GetComponent<Enemy>();
-        if (enemy != null && Input.GetKey("q"))
+        if (enemy != null)
         {
-            enemy.AdjustHealth(-1 * meleeDmg);
+            if (IsFacing(enemy) && Input.GetKey("q")) {
+                enemy.AdjustHealth(-1 * meleeDmg);
+            }
         }
     }
 
