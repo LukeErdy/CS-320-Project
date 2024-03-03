@@ -46,6 +46,7 @@ public class Enemy : Actor
 
     public IEnumerator Die()
     {
+        GameSession.Instance.IncreaseEnemiesKilled();
         //Reset sprite
         isDying = true;
         rb.velocity = new Vector2(0, 0);

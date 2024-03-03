@@ -206,8 +206,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 99749334}
-        m_TargetAssemblyTypeName: GameSession, Assembly-CSharp
+      - m_Target: {fileID: 1329631535}
+        m_TargetAssemblyTypeName: DataConsent, Assembly-CSharp
         m_MethodName: ConsentGiven
         m_Mode: 1
         m_Arguments:
@@ -372,7 +372,6 @@ GameObject:
   - component: {fileID: 99749333}
   - component: {fileID: 99749332}
   - component: {fileID: 99749331}
-  - component: {fileID: 99749334}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -455,18 +454,6 @@ Transform:
   - {fileID: 57976974}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &99749334
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 99749330}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 973316e968a344c8ab09a253748601a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &269879261
 GameObject:
   m_ObjectHideFlags: 0
@@ -1029,6 +1016,50 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1329631534
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1329631536}
+  - component: {fileID: 1329631535}
+  m_Layer: 0
+  m_Name: DataConsent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1329631535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1329631534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0793ed0bef344858bed2d8f2ae34248, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1329631536
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1329631534}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 576, y: 187.5, z: -8.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1747333538
 GameObject:
   m_ObjectHideFlags: 0
@@ -1112,8 +1143,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 99749334}
-        m_TargetAssemblyTypeName: GameSession, Assembly-CSharp
+      - m_Target: {fileID: 1329631535}
+        m_TargetAssemblyTypeName: DataConsent, Assembly-CSharp
         m_MethodName: ConsentNotGiven
         m_Mode: 1
         m_Arguments:
@@ -1168,3 +1199,4 @@ SceneRoots:
   m_Roots:
   - {fileID: 99749333}
   - {fileID: 348518951}
+  - {fileID: 1329631536}
