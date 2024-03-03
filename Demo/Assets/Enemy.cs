@@ -80,8 +80,8 @@ public class Enemy : Actor
             else rb.velocity = new Vector2(walkForce * distX, 0);
 
             //Change sprite based on movement direction
-            if (distX > 0) spriteRenderer.flipX = false;
-            else if (distX < 0) spriteRenderer.flipX = true;
+            if (distX > 0) spriteRenderer.flipX = false; //false
+            else if (distX < 0) spriteRenderer.flipX = true; //true
             spriteRenderer.sprite = currentSprites[spriteIndex];
         }
         //If enemy falls below a certain threshold, kill them
@@ -91,13 +91,21 @@ public class Enemy : Actor
         }
     }
 
+    private bool IsFacing(Player p)
+    {
+        //if colliding with player on x-axis
+        Debug.Log($"player: {p.posY}, enemy: {this.posY}");
+        return (p.posY-1)<=this.posY && (p.posY + 1) >= this.posY;
+    }
+
     protected void OnCollisionEnter2D(Collision2D col)
     {
         if (isDying) return;
         //Debug.Log("OnCollisionEnter2D: " + col.gameObject);
-        if (col.gameObject.name.Equals("Player"))
+        var player = col.gameObject.GetComponent<Player>();
+        if (player)
         {
-            //change to bite sprite
+            //change to attacking sprite
             spriteIndex = 0;
             currentSprites = attackingSprites;
         }
@@ -107,15 +115,10 @@ public class Enemy : Actor
     {
         if (isDying) return;
         //Debug.Log("OnCollisionStay2D: " + col.gameObject);
-        if (col.gameObject.name.Equals("Player"))
-        {
-            //TODO: check if rodent is facing correct direction in order for the bite to be effective
-            /*ContactPoint2D[] contacts = new ContactPoint2D[col.contactCount];
-            col.GetContacts(contacts);
-            for (int i = 0; i < contactCount; i++)
-                Debug.Log(contacts[i].point + " " + contacts[i].normal);*/
-            var player = col.gameObject.GetComponent<Player>();
-            if (spriteIndex == 1) player.AdjustHealth(-1);
+        var player = col.gameObject.GetComponent<Player>();
+        if (player && IsFacing(player))
+        { 
+            if((int)(currentSprites.Length/2) == spriteIndex) player.AdjustHealth(-1*meleeDmg);
         }
     }
 
