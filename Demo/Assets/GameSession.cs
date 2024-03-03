@@ -6,13 +6,29 @@ using System;
 
 public class GameSession : MonoBehaviour
 {
-    String sessionStart;
-    // enemies killed
-    // playerDeaths
+    static String sessionStart;
+    static String sessionEnd;
+    static bool collectingData;
+    static bool inBattle;
+    static int playerDeaths;
+    static int enemiesKilled;
     // levels completed?
+
+    public static GameSession Instance;
+
+    private void Awake()
+    {
+        if (Instance == null) {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            return;
+        }
+    }
 
     public void PlayGame()
     {
+        playerDeaths = 0;
+        SceneManager.LoadSceneAsync("SampleScene");
         if (PlayerPrefs.GetInt("DataConsent",0) == 1)
         {
             sessionStart = System.DateTime.Now.ToString();
@@ -20,11 +36,8 @@ public class GameSession : MonoBehaviour
             UnityServices.InitializeAsync();
             AnalyticsService.Instance.StartDataCollection();
             AnalyticsService.Instance.RecordEvent("sessionStarted");
-
-            // to send the event immediately
-            AnalyticsService.Instance.Flush();
         }
-        SceneManager.LoadSceneAsync("SampleScene");
+        Debug.Log(playerDeaths);
     }
 
     public void DataCollection()
@@ -36,6 +49,7 @@ public class GameSession : MonoBehaviour
     public void ConsentGiven()
     {
         PlayerPrefs.SetInt("DataConsent", 1);
+        collectingData = true;
         SceneManager.LoadSceneAsync("Main Menu");
     }
 
@@ -43,7 +57,11 @@ public class GameSession : MonoBehaviour
     {
         PlayerPrefs.SetInt("DataConsent", 0);
         // stop data collection
-        AnalyticsService.Instance.StopDataCollection();
+        if (collectingData){
+            collectingData = false;
+            UnityServices.InitializeAsync();
+            AnalyticsService.Instance.StopDataCollection();
+        }
         SceneManager.LoadSceneAsync("Main Menu");
     }
 
@@ -53,11 +71,14 @@ public class GameSession : MonoBehaviour
         {
             if (PlayerPrefs.GetInt("DataConsent", 0) == 1)
             {
+                sessionEnd = System.DateTime.Now.ToString();
                 CustomEvent myEvent = new CustomEvent("sessionEnded")
-            {
-                {"sessionTimestamp",sessionStart}
-                // also want to track enemies killed and playerDeaths in session
-            };
+                {
+                    {"sessionTimestamp",sessionStart},
+                    {"playerDeaths",playerDeaths},
+                    {"enemiesKilled",enemiesKilled}
+                };
+                Debug.Log(playerDeaths);
                 AnalyticsService.Instance.RecordEvent(myEvent);
             }
             SceneManager.LoadSceneAsync("Main Menu");
@@ -66,41 +87,54 @@ public class GameSession : MonoBehaviour
 
     private void MovementType()
     {
-        if (Input.GetKeyDown("left"))
-        {
-            // backward movement
-            trackMovement("backwards");
-        }
-        if (Input.GetKeyDown("right"))
-        {
-            // forward movement
-            trackMovement("forwards");
-        }
-        if (Input.GetButtonDown("Jump"))
-        {
-            // jump movement
-            trackMovement("jump");
-        }
-        if (Input.GetKeyDown("q"))
-        {
-            // attack movement
-            trackMovement("attack");
-        }
-        if (Input.GetButtonDown("Jump") && Input.GetKeyDown("right"))
-        {
-            // jump forward
-            trackMovement("jump forwards");
-        }
-        if (Input.GetButtonDown("Jump") && Input.GetKeyDown("left"))
-        {
-            // jump backwards
-            trackMovement("jump backwards");
-        }
+        if (inBattle){
+            if (PlayerPrefs.GetInt("DataConsent",0) == 1){
+
+                if (Input.GetKeyDown("left"))
+                {
+                    // backward movement
+                    trackMovement("backwards");
+                }
+                if (Input.GetKeyDown("right"))
+                {
+                    // forward movement
+                    trackMovement("forwards");
+                }
+                if (Input.GetButtonDown("Jump"))
+                {
+                    // jump movement
+                    trackMovement("jump");
+                }
+                if (Input.GetKeyDown("q"))
+                {
+                    // attack movement
+                    trackMovement("attack");
+                }
+                if (Input.GetButtonDown("Jump") && Input.GetKeyDown("right"))
+                {
+                    // jump forward
+                    trackMovement("jump forwards");
+                }
+                if (Input.GetButtonDown("Jump") && Input.GetKeyDown("left"))
+                {
+                    // jump backwards
+                    trackMovement("jump backwards");
+                }
+            }
+        } 
+    }
+
+    public void IncreasePlayerDeath(){
+        playerDeaths += 1;
+    }
+
+    public void IncreaseEnemiesKilled(){
+        enemiesKilled += 1;
     }
 
     private void trackMovement(String movementType)
     {
-        try
+        if(PlayerPrefs.GetInt("DataConsent",0) == 1 && inBattle)
         {
             CustomEvent myEvent = new CustomEvent("playerMovement")
             {
@@ -109,7 +143,6 @@ public class GameSession : MonoBehaviour
             };
             AnalyticsService.Instance.RecordEvent(myEvent);
         }
-        catch { }
     }
 
     private void Update()
