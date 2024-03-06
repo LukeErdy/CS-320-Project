@@ -7,7 +7,7 @@ using System.Linq;
 
 public class Enemy : Actor
 {
-    protected Sprite[] currentSprites = null;
+    public Sprite[] currentSprites = null;
     public Sprite[] movingSprites;
     public Sprite[] attackingSprites;
     protected int spriteIndex = 0;
