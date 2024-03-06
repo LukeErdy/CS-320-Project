@@ -6,6 +6,7 @@ using UnityEngine.TestTools;
 
 public class AmysTest
 {
+    #region Examples
     // A Test behaves as an ordinary method
     [Test]
     public void AmysTestSimplePasses()
@@ -22,4 +23,78 @@ public class AmysTest
         // Use yield to skip a frame.
         yield return null;
     }
+    #endregion
+
+    [UnityTest]
+    public IEnumerator TestEnemySpriteOutsideRadius()
+    {
+       Player p = GameObject.Find("Player").GetComponent<Player>();
+        yield return null;
+    }
+
+    [Test]
+    public void TestEnemySpriteInsideRadius()
+    {
+
+    }
+
+    [Test]
+    public void TestEnemyMovementOutsideRadius()
+    {
+
+    }
+
+    [Test]
+    public void TestEnemyMovementInsideRadius()
+    {
+
+    }
+
+    [Test]
+    public void TestEnemyDestroyOnLowThreshold()
+    {
+
+    }
+
+    public void TestEnemyDestroyOn0HP()
+    {
+
+    }
+
+    [Test]
+    public void TestPlayerXPOnEnemyDeath()
+    {
+
+    }
+
+    [Test]
+    public void TestPlayerMeleeAttack()
+    {
+
+    }
+
+    [Test]
+    public void TestEnemyMeleeAttack()
+    {
+
+    }
+
+    [Test]
+    public void TestEnemySpawnOnGrassTile()
+    {
+
+    }
+
+    [Test]
+    public void TestSpawnerNumberEnemies()
+    {
+
+    }
+
+    [Test]
+    public void TestPlayerRespawn()
+    {
+        
+    }
+
 }
