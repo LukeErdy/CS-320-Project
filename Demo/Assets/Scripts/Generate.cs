@@ -35,7 +35,7 @@ public class Generate : MonoBehaviour{
     public Tile[] tiles = new Tile[6];
 
     // Start is called before the first frame update
-    void Start(){
+    public void Start(){
 
 
         #if WFC_GEN
