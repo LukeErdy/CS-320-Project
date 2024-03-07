@@ -10,7 +10,7 @@ public class EnemySpawn : MonoBehaviour
     public Generate generatedTerrain;
     public GameObject[] enemyPrefabs;
 
-    IEnumerator Start()
+    public IEnumerator Start()
     {
         yield return new WaitUntil(() => generatedTerrain.IsInitialized);
         if (enemyPrefabs == null || enemyPrefabs.Length == 0)

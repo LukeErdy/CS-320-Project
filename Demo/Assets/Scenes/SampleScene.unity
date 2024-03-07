@@ -28971,7 +28971,6 @@ MonoBehaviour:
   - {fileID: 1596494608, guid: 5da909d76c2a26b22978895a5ca0d84d, type: 3}
   - {fileID: -1514071669, guid: 5da909d76c2a26b22978895a5ca0d84d, type: 3}
   - {fileID: -563831968, guid: 5da909d76c2a26b22978895a5ca0d84d, type: 3}
-  meleeDmg: 2
   healthBar: {fileID: 937385158}
   xpBar: {fileID: 926078464}
   currentXP: 0
