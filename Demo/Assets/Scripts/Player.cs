@@ -60,12 +60,12 @@ public sealed class Player : Actor
         spriteRenderer.sprite = currentSprites[spriteIndex];
     }
 
-    private void CheckHealth()
+    public void CheckHealth()
     {
         if (currentHP <= 0)
         {
             //TODO: How do we want to handle death? rn I'm just respawning him
-            GameSession.Instance.IncreasePlayerDeath();
+            GameSession.Instance.IncreasePlayerDeath(); // this is not working :(
             rb.velocity = new Vector2(0, 0);
             transform.position = new Vector3(Generate.MIN_X + 1, Generate.MAX_Y - 1, transform.position.z);
             AdjustHealth(maxHP);
