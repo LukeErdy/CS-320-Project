@@ -41,6 +41,8 @@ public class Enemy : Actor
     protected bool WithinSightRadius(Vector2 targetLoc)
     {
         double distance = Math.Sqrt(Math.Pow(Math.Abs(posX - targetLoc.x), 2) + Math.Pow(Math.Abs(posY - targetLoc.y), 2));
+        if (distance <= sightRadius) GameSession.Instance.BattleStatus(true);
+        else GameSession.Instance.BattleStatus(false);
         return distance <= sightRadius;
     }
 

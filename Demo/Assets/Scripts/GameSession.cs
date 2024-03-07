@@ -27,17 +27,13 @@ public class GameSession : MonoBehaviour
 
     public void PlayGame()
     {
-        playerDeaths = 0;
+        Reset();
         SceneManager.LoadSceneAsync("SampleScene");
         if (PlayerPrefs.GetInt("DataConsent",0) == 1)
         {
             sessionStart = System.DateTime.Now.ToString();
-            // start data collection
-            UnityServices.InitializeAsync();
-            AnalyticsService.Instance.StartDataCollection();
             AnalyticsService.Instance.RecordEvent("sessionStarted");
         }
-        Debug.Log(playerDeaths);
     }
 
     public void DataCollection()
@@ -50,6 +46,8 @@ public class GameSession : MonoBehaviour
     {
         PlayerPrefs.SetInt("DataConsent", 1);
         collectingData = true;
+        UnityServices.InitializeAsync();
+        AnalyticsService.Instance.StartDataCollection();
         SceneManager.LoadSceneAsync("Main Menu");
     }
 
@@ -65,24 +63,20 @@ public class GameSession : MonoBehaviour
         SceneManager.LoadSceneAsync("Main Menu");
     }
 
-    private void ExitGame()
+    public void ExitGame()
     {
-        if (Input.GetKey(KeyCode.Escape))
+        if (PlayerPrefs.GetInt("DataConsent", 0) == 1)
         {
-            if (PlayerPrefs.GetInt("DataConsent", 0) == 1)
+            sessionEnd = System.DateTime.Now.ToString();
+            CustomEvent myEvent = new CustomEvent("sessionEnded")
             {
-                sessionEnd = System.DateTime.Now.ToString();
-                CustomEvent myEvent = new CustomEvent("sessionEnded")
-                {
-                    {"sessionTimestamp",sessionStart},
-                    {"playerDeaths",playerDeaths},
-                    {"enemiesKilled",enemiesKilled}
-                };
-                Debug.Log(playerDeaths);
-                AnalyticsService.Instance.RecordEvent(myEvent);
-            }
-            SceneManager.LoadSceneAsync("Main Menu");
+                {"sessionTimestamp",sessionStart},
+                {"playerDeaths",playerDeaths},
+                {"enemiesKilled",enemiesKilled}
+            };
+            AnalyticsService.Instance.RecordEvent(myEvent);
         }
+        SceneManager.LoadSceneAsync("Main Menu");
     }
 
     private void MovementType()
@@ -93,32 +87,32 @@ public class GameSession : MonoBehaviour
                 if (Input.GetKeyDown("left"))
                 {
                     // backward movement
-                    trackMovement("backwards");
+                    TrackMovement("backwards");
                 }
                 if (Input.GetKeyDown("right"))
                 {
                     // forward movement
-                    trackMovement("forwards");
+                    TrackMovement("forwards");
                 }
                 if (Input.GetButtonDown("Jump"))
                 {
                     // jump movement
-                    trackMovement("jump");
+                    TrackMovement("jump");
                 }
                 if (Input.GetKeyDown("q"))
                 {
                     // attack movement
-                    trackMovement("attack");
+                    TrackMovement("attack");
                 }
                 if (Input.GetButtonDown("Jump") && Input.GetKeyDown("right"))
                 {
                     // jump forward
-                    trackMovement("jump forwards");
+                    TrackMovement("jump forwards");
                 }
                 if (Input.GetButtonDown("Jump") && Input.GetKeyDown("left"))
                 {
                     // jump backwards
-                    trackMovement("jump backwards");
+                    TrackMovement("jump backwards");
                 }
             }
         } 
@@ -132,22 +126,73 @@ public class GameSession : MonoBehaviour
         enemiesKilled += 1;
     }
 
-    private void trackMovement(String movementType)
+    public void BattleStatus(bool state){
+        inBattle = state;
+    }
+
+    public bool GetStatus(String field){
+        switch (field){
+            case "collectingData": return (PlayerPrefs.GetInt("DataConsent",0) == 1);
+            case "inBattle": return inBattle; 
+            default: return false;
+        }
+    }
+
+    public String GetTimestamp(String field){
+        switch (field){
+            case "start": return sessionStart;
+            case "end": return sessionEnd;
+            default: return null;
+        }
+    }
+
+    public int GetCount(String field){
+        switch (field){
+            case "deaths": return playerDeaths;
+            case "killed": return enemiesKilled;
+            default: return -1;
+        }
+    }
+
+    public void Reset(){
+        sessionStart = null;
+        sessionEnd = null;
+        inBattle = false;
+        playerDeaths = 0;
+        enemiesKilled = 0;
+    }
+
+    public void TrackMovement(String movementType)
     {
-        if(PlayerPrefs.GetInt("DataConsent",0) == 1 && inBattle)
+        if(collectingData && inBattle)
         {
-            CustomEvent myEvent = new CustomEvent("playerMovement")
-            {
-                {"movementType",movementType},
-                {"sessionTimestamp",sessionStart}
-            };
-            AnalyticsService.Instance.RecordEvent(myEvent);
+            switch (movementType){
+                case "backwards": break;
+                case "forwards": break;
+                case "jump backwards": break;
+                case "jump forwards": break;
+                case "jump": break;
+                case "attack": break;
+                default: return;
+            }
+            try {
+                CustomEvent myEvent = new CustomEvent("playerMovement")
+                {
+                    {"movementType",movementType},
+                    {"sessionTimestamp",sessionStart}
+                };
+                AnalyticsService.Instance.RecordEvent(myEvent);
+            } catch {
+            }
         }
     }
 
     private void Update()
     {
-        ExitGame();
+        if (Input.GetKey(KeyCode.Escape)){
+            ExitGame();
+        }
+        
         MovementType();
     }
 }
