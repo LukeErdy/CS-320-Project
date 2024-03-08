@@ -7,7 +7,7 @@ public class OnlineOnKey : MonoBehaviour
     public SpriteRenderer spriteRenderer;
     public Sprite Online;
     public Sprite Offline;
-    int keyStrokes = 0;
+    public int keyStrokes = 0;
 
 
     void Start()
