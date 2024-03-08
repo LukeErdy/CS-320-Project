@@ -18,7 +18,10 @@ public sealed class Player : Actor
     //Health and XP variables
     public HealthBar healthBar;
     public XPBar xpBar;
+    public PowerMeter power;
     float requiredXP = 45;
+    float requiredPower = 100f;
+    float currentPower = 0f;
     public float currentXP;
 
     //Other variables
@@ -159,5 +162,16 @@ public sealed class Player : Actor
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position - transform.up * castDistance, boxSize);
+    }
+
+    public void AdjustPower(float change)
+    {
+        currentPower += change;
+        if (currentPower >= requiredPower)
+        {
+            currentPower = requiredPower; // must be set to 0 after special attack is executed
+        }
+
+        power.SetPower((currentPower / requiredPower) * 100f);
     }
 }
