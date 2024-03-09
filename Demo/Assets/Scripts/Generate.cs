@@ -36,8 +36,6 @@ public class Generate : MonoBehaviour{
 
     // Start is called before the first frame update
     public void Start(){
-
-
         #if WFC_GEN
         int testX = xDim, testY = yDim;
         // int testX = 5, testY = 5;
@@ -147,7 +145,8 @@ public class Generate : MonoBehaviour{
 }
 
 //Uses a sin wave to produce realistic-ish hills
-class Hill{
+//TODO: Make private after testing
+public class Hill{
     float w;
     float a;
     bool inv;
@@ -166,27 +165,28 @@ class Hill{
 }
 
 
-enum Tl{ empty, grass_0, dirt_0, stone_0, gravel_0, error_0 }
+public enum Tl{ empty, grass_0, dirt_0, stone_0, gravel_0, error_0 } //TODO: Make private after testing
 
 
 //A WFCRule indicates all the possible tiles that can be placed in
 //the x,y position relative to the current tile
 //TODO: implement weights for tiles
-class WFCRule{
+public class WFCRule{//TODO: Make private after testing
     public int x, y;
     public Dictionary<Tl,float> tiles;
     public WFCRule(int xIn, int yIn, Dictionary<Tl,float> tilesIn){ x=xIn; y=yIn; tiles=tilesIn; }
 }
 
 
-class WFCQueue{
-    int[,] indices;
-    int size; //Actual size minus one
-    (float ent, int x, int y, Dictionary<Tl,float> tiles)[] queue;
+//TODO: Make private after testing
+public class WFCQueue{
+    public int[,] indices; //TODO: Make private after testing
+    public int size; //Actual size minus one //TODO: Make private after testing
+    public (float ent, int x, int y, Dictionary<Tl,float> tiles)[] queue; //TODO: Make private after testing
 
     public WFCQueue(int x, int y){
         indices = new int[x,y];
-        queue = new (float ent, int x, int y, Dictionary<Tl,float> tiles)[x*y];
+        queue = new (float ent, int x, int y, Dictionary<Tl,float> tiles)[x*y]; 
         size = queue.Length-1;
 
         //Initialize the queue with each tile being able to be any of
@@ -206,7 +206,7 @@ class WFCQueue{
     }
 
     //Swaps items in the queue and updates their indices in the table
-    void swap(int ind1, int ind2){
+    public void swap(int ind1, int ind2){ //TODO: Make private after testing
         var temp = queue[ind1];
         queue[ind1] = queue[ind2];
         queue[ind2] = temp;
@@ -214,6 +214,7 @@ class WFCQueue{
         indices[queue[ind2].x, queue[ind2].y] = ind2;
     }
 
+    //TODO: Make private after testing
     public (float ent, int x, int y, Dictionary<Tl,float> tiles) pop(){
         var output = queue[0];
         queue[0] = queue[size];
@@ -295,10 +296,11 @@ class WFCQueue{
 }
 
 
-class WaveFuncColl{
+//TODO: Make private after testing
+public class WaveFuncColl{
     public Tl[,] map; //TODO: Make private and move setting the actual game map tiles to this class
     public WFCQueue queue; //TODO: Make private
-    WFCRule[][] rules;
+    public WFCRule[][] rules;//TODO: Make private after testing
 
     public WaveFuncColl(int x, int y){ 
         map = new Tl[x,y];
@@ -430,7 +432,7 @@ class WaveFuncColl{
     //Runs through the rules for the tile type at the given location
     //and updates the possible types for all the tiles affected by 
     //those rules
-    void update(int x, int y){
+    public void update(int x, int y){//TODO: Make private after testing
         Tl tile = map[x,y];
         for(int i = 0; i < rules[(int)tile].Length; i++){
             int newX = x + rules[(int)tile][i].x;
