@@ -1,6 +1,8 @@
 //Comment these defines to disable level gen and revert to original level
 //#define OLD_GEN
 #define WFC_GEN
+//Cave generation isn't done, toggle on to test
+// #define CAVE_GEN
 
 using System.Collections;
 using System.Collections.Generic;
@@ -10,6 +12,15 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 //TODO: Set player position above ground level
+
+
+class distSort : IComparer{
+    int IComparer.Compare(object a, object b){
+        var aTup = ((double d, int x1, int y1, int x2, int y2))a;
+        var bTup = ((double d, int x1, int y1, int x2, int y2))b;
+        return (int)(aTup.d - bTup.d);
+    }
+}
 
 
 public class Generate : MonoBehaviour{
@@ -40,15 +51,16 @@ public class Generate : MonoBehaviour{
         int testX = xDim, testY = yDim;
         // int testX = 5, testY = 5;
         WaveFuncColl test = new WaveFuncColl(testX,testY);
+        var rand = new System.Random();
 
         //Generate a horizontal line of grass
         // for(int i = 0; i < testX; i++) test.set(i, 30, Tl.grass_0);
 
+        #if !CAVE_GEN
         //Generate Grassy Hills
         //FIXME: Some empty tiles with high amplitude (~30)
         int startY=yDim-30, width=0, wCount=0, currH, prevH=-1, amplitude;
         bool goDown = true;
-        var rand = new System.Random();
         Hill nextHill = null;
 
         for(int i = 0; i < xDim; i++){
@@ -83,10 +95,42 @@ public class Generate : MonoBehaviour{
             prevH = currH;
             wCount++;
         }
+        #endif
 
 
+        #if CAVE_GEN
+        //Generate Caves
+        const int numNodes = 20;
+        const int numEntrances = 3;
+        const int maxConnections = (int)(1.5*numNodes);
+        const int maxConnPerNode = 6;
+
+        var caveNodes = new (int x, int y)[numNodes];
+        var edgeList = new (double d, int x1, int y1, int x2, int y2)[((numNodes*(numNodes-1))/2)];
+        int ELC = 0;
+        for(int i = 0; i < numNodes; i++){
+            caveNodes[i] = (rand.Next(xDim), rand.Next(yDim));
+            for(int j = 0; j < i; j++){
+                edgeList[ELC++] = (
+                    Math.Sqrt(Math.Pow(caveNodes[i].x-caveNodes[j].x, 2)+Math.Pow(caveNodes[i].y-caveNodes[j].y, 2)), 
+                    caveNodes[i].x, caveNodes[i].y, caveNodes[j].x, caveNodes[j].y);
+            }
+        }
         
+        // IComparer myComparer = new distSort();
+        Array.Sort(edgeList, new distSort());
+        foreach(var item in edgeList){
+            Debug.Log("d = " + item.d + "; x1 = " + item.x1 + "; y1 = " + item.y1 + "; x2 = " + item.x2 + "; y2 = " + item.y2);
+        }
+        #endif
+
+
+        //Generate Tiles
         test.run();
+        #if CAVE_GEN
+        foreach(var coord in caveNodes) test.set(coord.x, coord.y, Tl.error_0);
+        #endif
+        
 
         //Write tiles to the game's tilemap
         for(int i = 0; i < testX; i++){
@@ -145,8 +189,7 @@ public class Generate : MonoBehaviour{
 }
 
 //Uses a sin wave to produce realistic-ish hills
-//TODO: Make private after testing
-public class Hill{
+class Hill{
     float w;
     float a;
     bool inv;
@@ -165,24 +208,22 @@ public class Hill{
 }
 
 
-public enum Tl{ empty, grass_0, dirt_0, stone_0, gravel_0, error_0 } //TODO: Make private after testing
+enum Tl{ empty, grass_0, dirt_0, stone_0, gravel_0, error_0 }
 
 
 //A WFCRule indicates all the possible tiles that can be placed in
 //the x,y position relative to the current tile
-//TODO: implement weights for tiles
-public class WFCRule{//TODO: Make private after testing
+class WFCRule{
     public int x, y;
     public Dictionary<Tl,float> tiles;
     public WFCRule(int xIn, int yIn, Dictionary<Tl,float> tilesIn){ x=xIn; y=yIn; tiles=tilesIn; }
 }
 
 
-//TODO: Make private after testing
-public class WFCQueue{
-    public int[,] indices; //TODO: Make private after testing
-    public int size; //Actual size minus one //TODO: Make private after testing
-    public (float ent, int x, int y, Dictionary<Tl,float> tiles)[] queue; //TODO: Make private after testing
+class WFCQueue{
+    int[,] indices;
+    int size; //Actual size minus one
+    (float ent, int x, int y, Dictionary<Tl,float> tiles)[] queue;
 
     public WFCQueue(int x, int y){
         indices = new int[x,y];
@@ -206,7 +247,7 @@ public class WFCQueue{
     }
 
     //Swaps items in the queue and updates their indices in the table
-    public void swap(int ind1, int ind2){ //TODO: Make private after testing
+    void swap(int ind1, int ind2){
         var temp = queue[ind1];
         queue[ind1] = queue[ind2];
         queue[ind2] = temp;
@@ -214,8 +255,9 @@ public class WFCQueue{
         indices[queue[ind2].x, queue[ind2].y] = ind2;
     }
 
-    //TODO: Make private after testing
+
     public (float ent, int x, int y, Dictionary<Tl,float> tiles) pop(){
+        if(size < 0) return (0, 0, 0, null); //This is to make WaveFuncColl.set() work after the map has been generated
         var output = queue[0];
         queue[0] = queue[size];
 
@@ -296,11 +338,11 @@ public class WFCQueue{
 }
 
 
-//TODO: Make private after testing
-public class WaveFuncColl{
+
+class WaveFuncColl{
     public Tl[,] map; //TODO: Make private and move setting the actual game map tiles to this class
     public WFCQueue queue; //TODO: Make private
-    public WFCRule[][] rules;//TODO: Make private after testing
+    WFCRule[][] rules;
 
     public WaveFuncColl(int x, int y){ 
         map = new Tl[x,y];
@@ -432,7 +474,7 @@ public class WaveFuncColl{
     //Runs through the rules for the tile type at the given location
     //and updates the possible types for all the tiles affected by 
     //those rules
-    public void update(int x, int y){//TODO: Make private after testing
+    void update(int x, int y){
         Tl tile = map[x,y];
         for(int i = 0; i < rules[(int)tile].Length; i++){
             int newX = x + rules[(int)tile][i].x;
