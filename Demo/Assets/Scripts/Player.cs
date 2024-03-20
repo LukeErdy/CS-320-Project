@@ -1,3 +1,4 @@
+using System.Timers;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -15,14 +16,13 @@ public sealed class Player : Actor
     private Sprite[] currentSprites = null;
     private int spriteIndex = 0;
 
-    //Health and XP variables
+    //Health XP, and Mana variables
     public HealthBar healthBar;
     public XPBar xpBar;
-    public PowerMeter power;
-    float requiredXP = 45;
-    float requiredPower = 100f;
-    float currentPower = 0f;
+    private float requiredXP = 45;
     public float currentXP;
+    public ManaMeter manaMeter;
+    private int mana = 0;
 
     //Other variables
     public Vector2 boxSize;
@@ -30,6 +30,13 @@ public sealed class Player : Actor
     public LayerMask groundLayer;
     private float lastVelocity = 0f;
     public bool chatLock = false;
+    private int _dirx = 1; //don't touch this unless you're DirX!!
+    public int DirX()
+    {
+        int x = (int)Input.GetAxisRaw("Horizontal");
+        if (x == 0) return _dirx;
+        else return _dirx = x;
+    }
 
     // Start is called before the first frame update
     private void Start()
@@ -39,13 +46,25 @@ public sealed class Player : Actor
         jumpForce = 15;
         SetMaxHP(30);
         AdjustXP(0);
-        meleeDmg = 2;
+        meleeDmg = 1;
+        rangedDmg = 5;
+    }
+    
+    private void Update()
+    {
+        CheckFireball();
+        CheckFallDamage();
+        CheckHealth();
+        UpdateMovement();
+        mana++;
     }
 
     private void UpdateMovement()
     {
+        int dirX = (int)Input.GetAxisRaw("Horizontal");
+        if(dirX != 0) _dirx = dirX; //for _dirx to update;
+        
         // Get the walk direction and apply a horizontal force to the player
-        float dirX = Input.GetAxisRaw("Horizontal");
         rb.velocity = new Vector2(walkForce * dirX, rb.velocity.y);
 
         if (Input.GetButtonDown("Jump") && (CheckIfGrounded() || canFly)) // Using Unity's input manager for greater flexibility
@@ -59,7 +78,9 @@ public sealed class Player : Actor
         if (currentSprites == null) currentSprites = rightSprites;
         if (dirX == 1) currentSprites = rightSprites;
         else if (dirX == -1) currentSprites = leftSprites;
-        spriteIndex = Input.GetKey("q") ? 1 : 0;                //if attacking, change to attacking sprite
+        if(Input.GetKey("e")) spriteIndex = 2;
+        else if(Input.GetKey("q")) spriteIndex = 1;
+        else spriteIndex = 0;
         spriteRenderer.sprite = currentSprites[spriteIndex];
     }
 
@@ -90,23 +111,34 @@ public sealed class Player : Actor
         lastVelocity = rb.velocity.y;
     }
 
-    private void Update()
+    private void CheckFireball()
     {
-        CheckHealth();
-        UpdateMovement();
-        CheckFallDamage();
+        if(mana>=100) {
+            mana = 100; //hard-coded mana cap
+            if(Input.GetKey("e")) { 
+                var dirX = DirX();
+                var position = new Vector2(dirX == 1 ? rb.position.x+2 : rb.position.x-2, rb.position.y);
+                GameObject obj = Instantiate(Resources.Load("Fireball"), position, new Quaternion(0,0,0,0)) as GameObject;
+                Projectile p = obj.GetComponent<Projectile>();
+                p.Damage = rangedDmg;
+                p.Dir = dirX; //to ensure Dir!=0
+                p.Source = this;
+                mana = 0;
+            }
+        }
     }
 
     private bool IsFacing(Enemy e)
     {
         var enemyDir = (e.transform.position - this.transform.position).normalized.x;
-        var playerDir = Input.GetAxis("Horizontal");
+        var playerDir = DirX();
         //Debug.Log($"enemy: {enemyDir}, player: {playerDir}");
         if (enemyDir < 0 && playerDir < 0) return true;
         else if (enemyDir > 0 && playerDir > 0) return true;
         else return false;
     }
 
+    #region Collision Events
     private void OnCollisionEnter2D(Collision2D col)
     {
         //Debug.Log("OnCollisionEnter2D: " + col.gameObject);
@@ -136,6 +168,7 @@ public sealed class Player : Actor
     {
         //Debug.Log("OnCollisionExit2D: " + col.gameObject);
     }
+    #endregion
 
     public void AdjustXP(float change)
     {
@@ -149,7 +182,6 @@ public sealed class Player : Actor
         xpBar.SetXP((currentXP / requiredXP) * 100f);
     }
 
-
     public bool CheckIfGrounded()
     {
         if (Physics2D.BoxCast(transform.position, boxSize, 0, -transform.up, castDistance, groundLayer))
@@ -162,16 +194,5 @@ public sealed class Player : Actor
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position - transform.up * castDistance, boxSize);
-    }
-
-    public void AdjustPower(float change)
-    {
-        currentPower += change;
-        if (currentPower >= requiredPower)
-        {
-            currentPower = requiredPower; // must be set to 0 after special attack is executed
-        }
-
-        power.SetPower((currentPower / requiredPower) * 100f);
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PowerMeter : MonoBehaviour
+public class ManaMeter : MonoBehaviour
 {
     public Slider slider;
 

@@ -173,6 +173,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: -1280768588131374338}
   rb: {fileID: -6354398113798998375}
+  currentSprites:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   movingSprites:
   - {fileID: 2055194982, guid: fdc78af73d95f06408684eec68ef20d8, type: 3}
   - {fileID: -726450351, guid: fdc78af73d95f06408684eec68ef20d8, type: 3}
