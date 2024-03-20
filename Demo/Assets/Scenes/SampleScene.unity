@@ -28974,6 +28974,7 @@ MonoBehaviour:
   healthBar: {fileID: 937385158}
   xpBar: {fileID: 926078464}
   currentXP: 0
+  power: {fileID: 0}
   boxSize: {x: 1.43, y: 1.22}
   castDistance: 0.5
   groundLayer:
@@ -29822,8 +29823,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1190204992}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -20.84, y: 0.01, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -17.040009, y: 0.049987793, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -29840,7 +29841,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1190204992}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68fd3b019822a5f6fa23862c9788bdb1, type: 3}
+  m_Script: {fileID: 11500000, guid: 3aac67e6abf1dd6449a7214b2006f17b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1190205000
@@ -32396,6 +32397,7 @@ MonoBehaviour:
   generatedTerrain: {fileID: 1361754201}
   enemyPrefabs:
   - {fileID: 3543759981571777827, guid: 90712fab35b43544abe9dea35d835a95, type: 3}
+  - {fileID: 8293531213229931541, guid: 8bdc61046038cd342837d7af7b510e76, type: 3}
 --- !u!1 &1602439421
 GameObject:
   m_ObjectHideFlags: 0
@@ -32515,6 +32517,6 @@ SceneRoots:
   - {fileID: 1540490727}
   - {fileID: 519420032}
   - {fileID: 511576908}
-  - {fileID: 1190204998}
   - {fileID: 891497688}
+  - {fileID: 1190204998}
   - {fileID: 736656176}

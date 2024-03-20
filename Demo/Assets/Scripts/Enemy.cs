@@ -7,7 +7,7 @@ using System.Linq;
 
 public class Enemy : Actor
 {
-    public Sprite[] currentSprites = null;
+    private Sprite[] currentSprites = null;
     public Sprite[] movingSprites;
     public Sprite[] attackingSprites;
     protected int spriteIndex = 0;
@@ -57,7 +57,7 @@ public class Enemy : Actor
         spriteRenderer.sprite = currentSprites[spriteIndex];
         spriteRenderer.flipY = true;
 
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
 
         //Give player XP for the kill
         var player = GameObject.Find("Player").GetComponent<Player>();
