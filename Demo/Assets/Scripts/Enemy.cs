@@ -10,8 +10,8 @@ public class Enemy : Actor
     private Sprite[] currentSprites = null;
     public Sprite[] movingSprites;
     public Sprite[] attackingSprites;
-    protected int spriteIndex = 0;
-    protected Timer spriteTimer;
+    protected uint spriteIndex = 0;
+    protected uint spriteTimer;
 
     private bool isDying = false;
     protected float sightRadius = 10f;
@@ -25,17 +25,6 @@ public class Enemy : Actor
     {
         if (null == currentSprites) currentSprites = movingSprites;
         rb = GetComponent<Rigidbody2D>();
-        spriteTimer = new Timer(100);
-        spriteTimer.Elapsed += ChangeSprite;
-        spriteTimer.AutoReset = true;
-        spriteTimer.Enabled = true;
-    }
-
-    protected void ChangeSprite(System.Object source, ElapsedEventArgs e)
-    {
-        if (isDying) return;
-        if (null == currentSprites) currentSprites = movingSprites;
-        spriteIndex = spriteIndex + 1 >= currentSprites.Length ? 0 : spriteIndex + 1;
     }
 
     protected bool WithinSightRadius(Vector2 targetLoc)
@@ -66,6 +55,17 @@ public class Enemy : Actor
         //Finally remove GameObject from scene
         Destroy(gameObject);
     }
+    
+    protected void UpdateSprite()
+    {
+        if (isDying) return;
+        if (null == currentSprites) currentSprites = movingSprites;
+        if (spriteTimer >= 20) { 
+            spriteIndex = spriteIndex + 1 >= currentSprites.Length ? 0 : spriteIndex + 1;
+            spriteTimer = 0;
+        }
+        else spriteTimer++;
+    }
 
     private void Update()
     {
@@ -81,7 +81,8 @@ public class Enemy : Actor
             if (distY >= jumpForce) rb.velocity = new Vector2(walkForce * distX, jumpForce * dir.y);
             else rb.velocity = new Vector2(walkForce * distX, 0);
 
-            //Change sprite based on movement direction
+            //Update sprite based on movement direction
+            UpdateSprite();
             if (distX > 0) spriteRenderer.flipX = false; //false
             else if (distX < 0) spriteRenderer.flipX = true; //true
             spriteRenderer.sprite = currentSprites[spriteIndex];

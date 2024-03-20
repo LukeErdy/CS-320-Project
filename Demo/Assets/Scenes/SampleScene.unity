@@ -28974,7 +28974,7 @@ MonoBehaviour:
   healthBar: {fileID: 937385158}
   xpBar: {fileID: 926078464}
   currentXP: 0
-  power: {fileID: 0}
+  manaMeter: {fileID: 0}
   boxSize: {x: 1.43, y: 1.22}
   castDistance: 0.5
   groundLayer:
@@ -29193,6 +29193,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1190204998}
   - {fileID: 909515331}
   - {fileID: 937385157}
   - {fileID: 926078463}
@@ -29824,13 +29825,13 @@ Transform:
   m_GameObject: {fileID: 1190204992}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -17.040009, y: 0.049987793, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -417.43222, y: -81.58569, z: 0}
+  m_LocalScale: {x: 1.0230179, y: 1.0230179, z: 1.0230179}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1340503910}
   - {fileID: 1602439422}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 736656176}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1190204999
 MonoBehaviour:
@@ -32518,5 +32519,4 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 511576908}
   - {fileID: 891497688}
-  - {fileID: 1190204998}
   - {fileID: 736656176}

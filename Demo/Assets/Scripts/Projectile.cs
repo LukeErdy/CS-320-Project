@@ -11,10 +11,11 @@ public class Projectile : MonoBehaviour
     public SpriteRenderer spriteRenderer;
     public Sprite[] movingSprites;
     private uint spriteIndex;
+    private uint spriteTimer;
     public Actor Source;
     public Actor Target;
     public int Dir = 1;
-    public int Speed = 5;
+    public uint Speed = 1;
     public uint Damage = 1;
 
     private void Start()
@@ -25,12 +26,17 @@ public class Projectile : MonoBehaviour
     private void Update()
     {
         //Update/check velocity
-        rb.velocity = new Vector2(Dir * Speed, 0); //TODO: get dir from Source?
+        rb.velocity = new Vector2(Dir * Speed, 0); 
         //Update sprite
-        if (Dir > 0) spriteRenderer.flipX = false;
+        if (Dir >= 0) spriteRenderer.flipX = false;
         else spriteRenderer.flipX = true;
-        spriteIndex = spriteIndex + 1 >= movingSprites.Length ? 0 : spriteIndex + 1;
-        spriteRenderer.sprite = movingSprites[spriteIndex];
+        if (spriteTimer >= 20)
+        {
+            spriteIndex = spriteIndex + 1 >= movingSprites.Length ? 0 : spriteIndex + 1;
+            spriteRenderer.sprite = movingSprites[spriteIndex];
+            spriteTimer = 0;
+        }
+        else spriteTimer++;
     }
 
     private void OnCollisionEnter2D(Collision2D col)

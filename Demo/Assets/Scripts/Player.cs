@@ -16,7 +16,7 @@ public sealed class Player : Actor
     private Sprite[] currentSprites = null;
     private int spriteIndex = 0;
 
-    //Health and XP variables
+    //Health XP, and Mana variables
     public HealthBar healthBar;
     public XPBar xpBar;
     private float requiredXP = 45;
@@ -46,7 +46,8 @@ public sealed class Player : Actor
         jumpForce = 15;
         SetMaxHP(30);
         AdjustXP(0);
-        meleeDmg = 2;
+        meleeDmg = 1;
+        rangedDmg = 5;
     }
     
     private void Update()
@@ -77,7 +78,9 @@ public sealed class Player : Actor
         if (currentSprites == null) currentSprites = rightSprites;
         if (dirX == 1) currentSprites = rightSprites;
         else if (dirX == -1) currentSprites = leftSprites;
-        spriteIndex = Input.GetKey("q") ? 1 : 0;                //if attacking, change to attacking sprite
+        if(Input.GetKey("e")) spriteIndex = 2;
+        else if(Input.GetKey("q")) spriteIndex = 1;
+        else spriteIndex = 0;
         spriteRenderer.sprite = currentSprites[spriteIndex];
     }
 
@@ -117,6 +120,7 @@ public sealed class Player : Actor
                 var position = new Vector2(dirX == 1 ? rb.position.x+2 : rb.position.x-2, rb.position.y);
                 GameObject obj = Instantiate(Resources.Load("Fireball"), position, new Quaternion(0,0,0,0)) as GameObject;
                 Projectile p = obj.GetComponent<Projectile>();
+                p.Damage = rangedDmg;
                 p.Dir = dirX; //to ensure Dir!=0
                 p.Source = this;
                 mana = 0;

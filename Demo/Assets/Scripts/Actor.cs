@@ -26,6 +26,7 @@ public class Actor : MonoBehaviour
 
     //Attack variables
     protected uint meleeDmg = 1;
+    protected uint rangedDmg = 1;
 
     public void AdjustHealth(float change)
     {
