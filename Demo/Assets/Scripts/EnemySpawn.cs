@@ -29,7 +29,7 @@ public class EnemySpawn : MonoBehaviour
             //e.spriteRenderer = sr;
             //Debug.Log("Spawned enemy at: " + pos);
         }
-        Debug.Log($"Spawned {spawnCount} enemies");
+        //Debug.Log($"Spawned {spawnCount} enemies");
     }
 
     private Vector3 GetSpawnLocation()
