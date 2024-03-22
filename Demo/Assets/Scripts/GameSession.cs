@@ -32,6 +32,7 @@ public class GameSession : MonoBehaviour
         if (PlayerPrefs.GetInt("DataConsent",0) == 1)
         {
             sessionStart = System.DateTime.Now.ToString();
+            UnityServices.InitializeAsync();
             AnalyticsService.Instance.RecordEvent("sessionStarted");
         }
     }
@@ -67,6 +68,8 @@ public class GameSession : MonoBehaviour
     {
         if (PlayerPrefs.GetInt("DataConsent", 0) == 1)
         {
+            // Debug.Log(playerDeaths);
+            // Debug.Log(enemiesKilled);
             sessionEnd = System.DateTime.Now.ToString();
             CustomEvent myEvent = new CustomEvent("sessionEnded")
             {

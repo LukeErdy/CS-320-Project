@@ -37,7 +37,6 @@ public class Enemy : Actor
 
     public IEnumerator Die()
     {
-        GameSession.Instance.IncreaseEnemiesKilled();
         //Reset sprite
         isDying = true;
         rb.velocity = new Vector2(0, 0);
@@ -51,6 +50,10 @@ public class Enemy : Actor
         //Give player XP for the kill
         var player = GameObject.Find("Player").GetComponent<Player>();
         player.AdjustXP(10);
+
+        //Increase enemies killed
+        var gs = GameObject.Find("GameSession").GetComponent<GameSession>();
+        gs.IncreaseEnemiesKilled();
 
         //Finally remove GameObject from scene
         Destroy(gameObject);
