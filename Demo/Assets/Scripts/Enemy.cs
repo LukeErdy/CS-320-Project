@@ -100,7 +100,7 @@ public class Enemy : Actor
     private bool IsFacing(Player p)
     {
         //if colliding with player on x-axis
-        Debug.Log($"player: {p.posY}, enemy: {this.posY}");
+        //Debug.Log($"player: {p.posY}, enemy: {this.posY}");
         return (p.posY-1)<=this.posY && (p.posY + 1) >= this.posY;
     }
 

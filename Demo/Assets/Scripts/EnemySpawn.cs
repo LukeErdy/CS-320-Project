@@ -29,7 +29,7 @@ public class EnemySpawn : MonoBehaviour
             //e.spriteRenderer = sr;
             //Debug.Log("Spawned enemy at: " + pos);
         }
-        Debug.Log($"Spawned {spawnCount} enemies");
+        //Debug.Log($"Spawned {spawnCount} enemies");
     }
 
     private Vector3 GetSpawnLocation()
@@ -41,7 +41,7 @@ public class EnemySpawn : MonoBehaviour
         var x = Random.Range(0, grassTiles.Length);
         var y = grassTiles[x];
         BoundsInt bounds = tilemap.cellBounds;
-        Vector3Int cell = new Vector3Int(x, y, 0);
+        Vector3Int cell = new Vector3Int(x+Generate.MIN_X, y+Generate.MIN_Y, 0);
 
         //Get the center of the random cell
         Vector3 pos = tilemap.GetCellCenterWorld(cell);
