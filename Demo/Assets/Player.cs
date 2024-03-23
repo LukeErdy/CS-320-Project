@@ -25,6 +25,7 @@ public sealed class Player : Actor
     public float currentXP;
 
     //Other variables
+    public bool chatLock;
     public Vector2 boxSize;
     public float castDistance;
     public LayerMask groundLayer;
@@ -43,6 +44,9 @@ public sealed class Player : Actor
 
     private void UpdateMovement()
     {
+        // Break case for chat lock
+        if (chatLock) return;
+
         // Get the walk direction and apply a horizontal force to the player
         float dirX = Input.GetAxisRaw("Horizontal");
         rb.velocity = new Vector2(walkForce * dirX, rb.velocity.y);
