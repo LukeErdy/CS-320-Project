@@ -2,7 +2,7 @@
 //#define OLD_GEN
 #define WFC_GEN
 //Cave generation isn't done, toggle on to test
-// #define CAVE_GEN
+#define CAVE_GEN
 
 using System.Collections;
 using System.Collections.Generic;
@@ -12,15 +12,6 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 //TODO: Set player position above ground level
-
-
-class distSort : IComparer{
-    int IComparer.Compare(object a, object b){
-        var aTup = ((double d, int x1, int y1, int x2, int y2))a;
-        var bTup = ((double d, int x1, int y1, int x2, int y2))b;
-        return (int)(aTup.d - bTup.d);
-    }
-}
 
 
 public class Generate : MonoBehaviour{
@@ -40,7 +31,7 @@ public class Generate : MonoBehaviour{
     public int[] grassTiles = new int[xDim];
     public bool IsInitialized { get; private set; } = false; //needed for EnemySpawner
 
-    //TODO replace this method 2 from https://stackoverflow.com/a/56604959
+    //TODO: replace this with method 2 from https://stackoverflow.com/a/56604959
     public Tilemap tilemap;
     //[0] = null; [1] = grass; [2] = dirt; [3] = stone; [4] = gravel
     public Tile[] tiles = new Tile[6];
@@ -56,7 +47,7 @@ public class Generate : MonoBehaviour{
         //Generate a horizontal line of grass
         // for(int i = 0; i < testX; i++) test.set(i, 30, Tl.grass_0);
 
-        #if !CAVE_GEN
+        // #if !CAVE_GEN
         //Generate Grassy Hills
         //FIXME: Some empty tiles with high amplitude (~30)
         int startY=yDim-30, width=0, wCount=0, currH, prevH=-1, amplitude;
@@ -95,11 +86,14 @@ public class Generate : MonoBehaviour{
             prevH = currH;
             wCount++;
         }
-        #endif
+        // #endif
+
+        //Generate Tiles
+        test.run();
 
 
         #if CAVE_GEN
-        //Generate Caves
+        //Generate Cave Nodes
         const int numNodes = 20;
         const int numEntrances = 3;
         const int maxConnections = (int)(1.5*numNodes);
@@ -109,75 +103,66 @@ public class Generate : MonoBehaviour{
         var edgeList = new (double d, int x1, int y1, int x2, int y2)[((numNodes*(numNodes-1))/2)];
         int ELC = 0;
         for(int i = 0; i < numNodes; i++){
-            caveNodes[i] = (rand.Next(xDim), rand.Next(yDim));
+            int randX = rand.Next(xDim);
+            caveNodes[i] = (randX, rand.Next(grassTiles[randX]));
             for(int j = 0; j < i; j++){
                 edgeList[ELC++] = (
                     Math.Sqrt(Math.Pow(caveNodes[i].x-caveNodes[j].x, 2)+Math.Pow(caveNodes[i].y-caveNodes[j].y, 2)), 
                     caveNodes[i].x, caveNodes[i].y, caveNodes[j].x, caveNodes[j].y);
             }
         }
-        
-        // IComparer myComparer = new distSort();
         Array.Sort(edgeList, new distSort());
-        foreach(var item in edgeList){
-            Debug.Log("d = " + item.d + "; x1 = " + item.x1 + "; y1 = " + item.y1 + "; x2 = " + item.x2 + "; y2 = " + item.y2);
+        // foreach(var item in edgeList){
+        //     Debug.Log("d = " + item.d + "; x1 = " + item.x1 + "; y1 = " + item.y1 + "; x2 = " + item.x2 + "; y2 = " + item.y2);
+        // }
+
+        //Brush Shape, a 3 by 3 square
+        var shape = new (int x, int y)[9];
+        int shapeIndex = 0;
+        for(int i = -1; i <= 1; i++){
+            for(int j = -1; j <= 1; j++){
+                shape[shapeIndex] = (i, j);
+                shapeIndex++;
+            }
         }
+
+        // caveGen.drawLine(caveNodes[0], caveNodes[1], shape, test);
+
+        //
+        var connectionCounts = new Dictionary<(int x, int y), int>();
+        int connections = 0;
+        for(int i = 0; i < edgeList.Length; i++){
+            (int x, int y) p1 = (edgeList[i].x1, edgeList[i].y1);
+            (int x, int y) p2 = (edgeList[i].x2, edgeList[i].y2);
+            
+            if(connectionCounts.ContainsKey(p1)){
+                if(connectionCounts[p1] >= maxConnPerNode) continue;
+            } else connectionCounts[p1] = 0;
+            
+            if(connectionCounts.ContainsKey(p2)){
+                if(connectionCounts[p2] >= maxConnPerNode) continue;
+            } else connectionCounts[p2] = 0;
+
+            connectionCounts[p1]++;
+            connectionCounts[p2]++;
+
+            caveGen.drawLine(p1, p2, shape, test);
+            if(++connections >= maxConnections) break;
+        }
+
+
         #endif
 
 
-        //Generate Tiles
-        test.run();
         #if CAVE_GEN
-        foreach(var coord in caveNodes) test.set(coord.x, coord.y, Tl.error_0);
+        // foreach(var coord in caveNodes) test.set(coord.x, coord.y, Tl.error_0);
         #endif
-        
+
 
         //Write tiles to the game's tilemap
         for(int i = 0; i < testX; i++){
             for(int j = 0; j < testY; j++){
                 tilemap.SetTile(new Vector3Int(i+MIN_X, j+MIN_Y, 0), tiles[(int)test.map[i,j]]);
-            }
-        }
-        #endif
-
-
-        #if OLD_GEN
-        //Create 2D array of bytes that will be converted into the tilemap
-        //Position (0,0) corresponds to the bottom left corner in-game
-        Tl[,] map = new Tl[xDim, yDim];
-        tiles[0] = null;
-
-        
-        //Generates a grassy, hilly terrain with dirt beneath it
-        //TODO: Make sure hills don't go out the top or bottom of map
-        int startY = 20, width, amplitude;
-        bool startBool = false;
-        var rand = new System.Random();
-
-        for(int i = 0; i < xDim; i += width+1){
-            width = rand.Next(MIN_PER, MAX_PER);
-            amplitude = rand.Next(MIN_AMP, MAX_AMP);
-
-            var nextHill = new Hill(width, amplitude, startBool);
-            for(int j = 0; j <= width; j++){
-                if(i+j >= xDim-1) break;
-                int colH = startY+nextHill.getY(j);
-                //FIXME: Got an index OOB error once
-                map[i+j, colH] = Tl.grass_0;
-                grassTiles[i+j] = colH;
-                for(int k = colH-1; k > colH-5; k--) map[i+j,k] = Tl.dirt_0;
-                map[i+j,colH-5] = Tl.gravel_0;
-                for(int k = colH-6; k >= 0; k--) map[i+j,k] = Tl.stone_0;
-            }
-
-            startY += nextHill.getY(width);
-            startBool = !startBool;
-        }
-
-        //Convert 2D array into tilemap
-        for(int i = 0; i < xDim; i++){
-            for(int j = 0; j < yDim; j++){
-                tilemap.SetTile(new Vector3Int(i+MIN_X, j+MIN_Y, 0), tiles[(int)map[i,j]]);
             }
         }
         #endif
@@ -187,6 +172,48 @@ public class Generate : MonoBehaviour{
     // Update is called once per frame
     void Update(){}
 }
+
+
+class distSort : IComparer{
+    int IComparer.Compare(object a, object b){
+        double aDis = (((double d, int x1, int y1, int x2, int y2))a).d;
+        double bDis = (((double d, int x1, int y1, int x2, int y2))b).d;
+        if(aDis == bDis) return 0;
+        if(aDis > bDis) return 1;
+        else return -1;
+    }
+}
+
+
+class caveGen{
+    public static void drawLine((int x, int y) sNode, (int x, int y) eNode, (int x, int y)[] shape, WaveFuncColl map){
+        float slope = (float)(sNode.y - eNode.y)/(float)(sNode.x - eNode.x);
+        float intercept = sNode.y - (slope * sNode.x);
+        if(sNode.x == eNode.x){
+            for(int i = sNode.y;;){
+                foreach(var pos in shape) 
+                    map.set(pos.x + sNode.x, pos.y + i, Tl.empty);
+                if(i == eNode.y) break;
+                i += (sNode.y < eNode.y) ? 1 : -1;
+            }
+        } else {
+            int smX, bgX;
+            if(sNode.x > eNode.x) { smX = eNode.x; bgX = sNode.x; }
+            else { smX = sNode.x; bgX = eNode.x; }
+            for(int i = smX; i < bgX; i++){
+                int currY = (int)(slope*i + intercept + 0.5);
+                int nextY = (int)(slope*(i+1) + intercept + 0.5);
+                for(int j = currY;;){
+                    foreach(var pos in shape)
+                        map.set(pos.x + i, pos.y + j, Tl.empty);
+                    if(j == nextY) break;
+                    j += (currY < nextY) ? 1 : -1;
+                }
+            }
+        }
+    }
+}
+
 
 //Uses a sin wave to produce realistic-ish hills
 class Hill{
@@ -485,6 +512,7 @@ class WaveFuncColl{
 
     //Sets a tile to a specific type
     public void set(int x, int y, Tl tile){
+        if(x >= map.GetLength(0) || y >= map.GetLength(1) || x < 0 || y < 0) return;
         queue.update(x, y, new Dictionary<Tl,float>());
         var setTile = queue.pop();
         map[x,y] = tile;
