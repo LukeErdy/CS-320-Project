@@ -15,7 +15,7 @@ public class Enemy : Actor
     private const uint spriteFrequency = 100;
 
     private bool isDying = false;
-    protected float sightRadius = 10f;
+    public float sightRadius = 10f;
 
     public override string ToString()
     {
@@ -41,6 +41,7 @@ public class Enemy : Actor
     {
         //Reset sprite
         isDying = true;
+        rb.gravityScale = 1;
         rb.velocity = new Vector2(0, 0);
         currentSprites = movingSprites;
         spriteIndex = 0;
@@ -91,17 +92,18 @@ public class Enemy : Actor
             }
             else
             {
-                Debug.Log($"distX abs: {Math.Abs(distX)}  distY abs: {Math.Abs(distY)}");
+                //Debug.Log($"distX abs: {Math.Abs(distX)}  distY abs: {Math.Abs(distY)}");
                 if (Math.Abs(distX) > Math.Abs(distY)) rb.velocity = new Vector2(walkForce * dir.x, 0);
                 else rb.velocity = new Vector2(0, jumpForce * dir.y);
             }
-
-            //Update sprite based on movement direction
-            UpdateSprite();
             if (distX > 0) spriteRenderer.flipX = false; //false
             else if (distX < 0) spriteRenderer.flipX = true; //true
-            spriteRenderer.sprite = currentSprites[spriteIndex];
         }
+
+        //Update sprite based on movement direction
+        UpdateSprite();
+        spriteRenderer.sprite = currentSprites[spriteIndex];
+
         //If enemy falls below a certain threshold, kill them
         if (transform.position.y < lowThreshold)
         {

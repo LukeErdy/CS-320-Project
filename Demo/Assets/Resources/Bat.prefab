@@ -63,6 +63,7 @@ MonoBehaviour:
   - {fileID: -166916992, guid: 201ee7fe4d676e44193ccadbb6bc9588, type: 3}
   - {fileID: 873222623, guid: 201ee7fe4d676e44193ccadbb6bc9588, type: 3}
   - {fileID: -438178832, guid: 201ee7fe4d676e44193ccadbb6bc9588, type: 3}
+  sightRadius: 100
 --- !u!212 &-4397549367572014130
 SpriteRenderer:
   m_ObjectHideFlags: 0
