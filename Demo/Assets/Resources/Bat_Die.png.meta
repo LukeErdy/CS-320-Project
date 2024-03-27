@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b0a8f1f39f2de4a4db17ee98a9431eb5
+guid: 555ff1ea9dde4e043b610638ea5879c7
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 8
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -72,7 +72,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -123,11 +123,11 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: MouseIdle_0
+      name: Bat_Die_0
       rect:
         serializedVersion: 2
-        x: 8
-        y: 173
+        x: 0
+        y: 11
         width: 16
         height: 9
       alignment: 0
@@ -137,20 +137,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dfaea4841d82511458c8d2c5db505476
-      internalID: 75680948
+      spriteID: eb05cc7241f157f44babcc5d657f022e
+      internalID: 934177520
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MouseIdle_1
+      name: Bat_Die_1
       rect:
         serializedVersion: 2
-        x: 8
-        y: 141
-        width: 16
-        height: 8
+        x: 18
+        y: 9
+        width: 10
+        height: 11
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,20 +158,62 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 447cb93a419d9a04c98d1b4341be0921
-      internalID: -568051112
+      spriteID: 330dd1b69a6cfa549878f50f5f666b73
+      internalID: -205676010
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MouseIdle_2
+      name: Bat_Die_2
       rect:
         serializedVersion: 2
-        x: 9
-        y: 109
+        x: 35
+        y: 6
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4253edeb54b51f44a8ee950c607a4841
+      internalID: 126151917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bat_Die_3
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 2
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bbe4fb85b674f9c46b47eaa6e9d75f15
+      internalID: -190503148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bat_Die_4
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 1
         width: 15
-        height: 7
+        height: 5
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -179,71 +221,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7ecb8042ef5197c488c6de3400b1237f
-      internalID: -1367140619
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: MouseIdle_3
-      rect:
-        serializedVersion: 2
-        x: 8
-        y: 77
-        width: 16
-        height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9639d4a6cdde2434293a29e1af322ea3
-      internalID: -814618047
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: MouseIdle_4
-      rect:
-        serializedVersion: 2
-        x: 8
-        y: 44
-        width: 16
-        height: 8
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 824d33b3d22da5941aa8afb5b272f8d3
-      internalID: 877672427
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: MouseIdle_5
-      rect:
-        serializedVersion: 2
-        x: 8
-        y: 13
-        width: 16
-        height: 8
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e4de58e4f469db74cb4421a8d6e569b0
-      internalID: 1773399400
+      spriteID: 31bbbc8e522b6354281d5d2d4bdb9a6a
+      internalID: -1196423876
       vertices: []
       indices: 
       edges: []
@@ -259,12 +238,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      MouseIdle_0: 75680948
-      MouseIdle_1: -568051112
-      MouseIdle_2: -1367140619
-      MouseIdle_3: -814618047
-      MouseIdle_4: 877672427
-      MouseIdle_5: 1773399400
+      Bat_Die_0: 934177520
+      Bat_Die_1: -205676010
+      Bat_Die_2: 126151917
+      Bat_Die_3: -190503148
+      Bat_Die_4: -1196423876
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -44,9 +44,9 @@ public sealed class Player : Actor
         rb = GetComponent<Rigidbody2D>();
         walkForce = 9;
         jumpForce = 15;
-        SetMaxHP(30);
+        SetMaxHP(50);
         AdjustXP(0);
-        meleeDmg = 1;
+        meleeDmg = 2;
         rangedDmg = 5;
     }
     
@@ -89,8 +89,12 @@ public sealed class Player : Actor
         if (currentHP <= 0)
         {
             //TODO: How do we want to handle death? rn I'm just respawning him
-            var gs = GameObject.Find("GameSession").GetComponent<GameSession>();
-            gs.IncreasePlayerDeath(); 
+            try
+            {
+                var gs = GameObject.Find("GameSession").GetComponent<GameSession>();
+                gs.IncreasePlayerDeath();
+            }
+            catch { }
             rb.velocity = new Vector2(0, 0);
             transform.position = new Vector3(Generate.MIN_X + 1, Generate.MAX_Y - 1, transform.position.z);
             AdjustHealth(maxHP);
@@ -114,8 +118,8 @@ public sealed class Player : Actor
 
     private void CheckFireball()
     {
-        if(mana>=100) {
-            mana = 100; //hard-coded mana cap
+        if(mana>=1000) {
+            mana = 1000; //hard-coded mana cap
             if(Input.GetKey("e")) { 
                 var dirX = DirX();
                 var position = new Vector2(dirX == 1 ? rb.position.x+2 : rb.position.x-2, rb.position.y);

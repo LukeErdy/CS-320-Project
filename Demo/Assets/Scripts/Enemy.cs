@@ -12,6 +12,7 @@ public class Enemy : Actor
     public Sprite[] attackingSprites;
     protected uint spriteIndex = 0;
     protected uint spriteTimer;
+    private const uint spriteFrequency = 100;
 
     private bool isDying = false;
     protected float sightRadius = 10f;
@@ -25,6 +26,7 @@ public class Enemy : Actor
     {
         if (null == currentSprites) currentSprites = movingSprites;
         rb = GetComponent<Rigidbody2D>();
+        SetMaxHP(10);
     }
 
     protected bool WithinSightRadius(Vector2 targetLoc)
@@ -52,8 +54,11 @@ public class Enemy : Actor
         player.AdjustXP(10);
 
         //Increase enemies killed
-        var gs = GameObject.Find("GameSession").GetComponent<GameSession>();
-        gs.IncreaseEnemiesKilled();
+        try
+        {
+            var gs = GameObject.Find("GameSession").GetComponent<GameSession>();
+            gs.IncreaseEnemiesKilled();
+        } catch{ }
 
         //Finally remove GameObject from scene
         Destroy(gameObject);
@@ -63,7 +68,7 @@ public class Enemy : Actor
     {
         if (isDying) return;
         if (null == currentSprites) currentSprites = movingSprites;
-        if (spriteTimer >= 20) { 
+        if (spriteTimer >= spriteFrequency) { 
             spriteIndex = spriteIndex + 1 >= currentSprites.Length ? 0 : spriteIndex + 1;
             spriteTimer = 0;
         }
@@ -80,9 +85,16 @@ public class Enemy : Actor
             var dir = (playerLoc - rb.transform.position).normalized;
             float distX = playerLoc.x - posX;
             float distY = playerLoc.y - posY;
-            //Debug.Log("playerLoc: " + playerLoc + "    distY: " + distY + "      normaldirY: " + dir.y);
-            if (distY >= jumpForce) rb.velocity = new Vector2(walkForce * distX, jumpForce * dir.y);
-            else rb.velocity = new Vector2(walkForce * distX, 0);
+            if (rb.gravityScale == 0)
+            {
+                rb.velocity = new Vector2(walkForce * dir.x, jumpForce * dir.y);
+            }
+            else
+            {
+                Debug.Log($"distX abs: {Math.Abs(distX)}  distY abs: {Math.Abs(distY)}");
+                if (Math.Abs(distX) > Math.Abs(distY)) rb.velocity = new Vector2(walkForce * dir.x, 0);
+                else rb.velocity = new Vector2(0, jumpForce * dir.y);
+            }
 
             //Update sprite based on movement direction
             UpdateSprite();

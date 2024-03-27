@@ -15,9 +15,9 @@ public class Actor : MonoBehaviour
     public float maxHP { get { return _maxHP; } }
 
     //Moving/location variables
-    protected float walkForce = 1f;
-    protected float jumpForce = 1f;
-    public int lowThreshold {get { return Generate.MIN_Y; }} 
+    public float walkForce = 1f;
+    public float jumpForce = 1f;
+    public int lowThreshold {get { return Generate.MIN_Y*3; }} 
 
     public SpriteRenderer spriteRenderer;
     public Rigidbody2D rb;
@@ -31,9 +31,9 @@ public class Actor : MonoBehaviour
     public void AdjustHealth(float change)
     {
         _currentHP += change;
-        if (_currentHP <= 0f)
+        if (_currentHP <= 0)
         {
-            _currentHP = 0f;
+            _currentHP = 0;
             if (this is Enemy e) StartCoroutine(e.Die());
             //TODO: trigger death sequence for player
         }
