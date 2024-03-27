@@ -47,15 +47,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1407f8b87b45d354db9e611f95a4805f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  walkForce: 1
+  jumpForce: 1
   spriteRenderer: {fileID: -88322848976187089}
   rb: {fileID: 5205356960147630434}
-  currentSprites:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   movingSprites:
   - {fileID: 1541651618, guid: be3d65034a5757c48b5598263b1c11f8, type: 3}
   - {fileID: 1367269794, guid: be3d65034a5757c48b5598263b1c11f8, type: 3}
@@ -68,6 +63,7 @@ MonoBehaviour:
   - {fileID: 2140686473, guid: 698674007e0954148a0c5222ef7bef54, type: 3}
   - {fileID: 1431951701, guid: 698674007e0954148a0c5222ef7bef54, type: 3}
   - {fileID: -1476099793, guid: 698674007e0954148a0c5222ef7bef54, type: 3}
+  sightRadius: 10
 --- !u!61 &-1752974700261876730
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -100,18 +96,18 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.001767993, y: -0.001767993}
+  m_Offset: {x: 0.2503104, y: 0.0050883293}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.051282, y: 1.1538461}
+    oldSize: {x: 2, y: 1.125}
     newSize: {x: 2.051282, y: 1.1538461}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.0855372, y: 1.1803336}
+  m_Size: {x: 1.2662044, y: 1.1460519}
   m_EdgeRadius: 0
 --- !u!50 &5205356960147630434
 Rigidbody2D:
@@ -125,10 +121,10 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 1
-  m_Mass: 0.8861868
+  m_Mass: 0.52240896
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 10
+  m_GravityScale: 5
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2

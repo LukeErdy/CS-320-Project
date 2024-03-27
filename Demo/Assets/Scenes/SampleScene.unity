@@ -28961,6 +28961,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f55a072e92b346478ecdf184a4aebaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  walkForce: 1
+  jumpForce: 1
   spriteRenderer: {fileID: 511576907}
   rb: {fileID: 511576906}
   leftSprites:
@@ -32393,12 +32395,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d39193f9397fcc408d303f622a2ca4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minEnemies: 5
-  maxEnemies: 10
+  minEnemies: 1
+  maxEnemies: 1
   generatedTerrain: {fileID: 1361754201}
   enemyPrefabs:
   - {fileID: 3543759981571777827, guid: 90712fab35b43544abe9dea35d835a95, type: 3}
   - {fileID: 8293531213229931541, guid: 8bdc61046038cd342837d7af7b510e76, type: 3}
+  - {fileID: 5381567494240929299, guid: d8ceb0a91459fc649a26b66edc63d7f7, type: 3}
 --- !u!1 &1602439421
 GameObject:
   m_ObjectHideFlags: 0
